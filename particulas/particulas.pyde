@@ -2,7 +2,7 @@ import random
 
 class Particula:
     
-    def __init__(self, id, x_max, y_max, tam_vecindad, x0=None, y0=None):
+    def __init__(self, id, x_max, y_max, tam_vecindad, malla=None,x0=None, y0=None):
         self.id = id # Esto nos ayudara para saber cual es la posicion de cada uno
         # en los arreglos de los vecinos 
         self.x = x0 if x != None else random.randint(0,x_max)
@@ -13,6 +13,8 @@ class Particula:
         self.desesperacion = 0
         self.sospechoso = None
         self.tam_vecindad = tam_vecindad # Radio de la vecindad de vision
+        if malla:
+            malla[self.x, self.y] = id
         
     def llena_vecinos(self, total_vecinos):
         '''
@@ -65,18 +67,35 @@ class Particula:
         #    8       NO
         acomodado = False
         celdas_posibles = self.obten_vecindad()
-        posicion = celdas_posibles[random.randint(0,len(celdas_posibles)]
+        posicion = celdas_posibles[random.randint(0,len(celdas_posibles))]
         iteracion = 0
         while not acomodado and celdas_posibles:        
             if malla[posicion[0],posicion[1]]==0:
                 #Esta vacia
-                malla[posicion[0],posicion[1]] = 1
+                malla[posicion[0],posicion[1]] = self.id
                 malla[self.x,self.y] = 0 #Cambiamos los valores de la malla
                 self.x = posicion[0]
                 self.y = posicion[1]
                 acomodado = True
             else:
                 celdas_posibles.remove(posicion)
-                posicion = celdas_posibles[random.randint(0,len(celdas_posibles)]
+                posicion = celdas_posibles[random.randint(0,len(celdas_posibles))]
         # Si no hay celdas disponibles, el agente no se mueve
-                
+        
+        def desespera(self):
+            # Esta funcion se invoca cuando hay un estimulador de desesperacion
+            cantidad = random.randint(1,2)
+            self.desespera += cantidad
+            
+        def vecinos_cercanos(self, malla):
+            '''
+            Funcion que devuelve los vecinos cercanos al agente en cuestion.
+            jugadores es la lista que contiene a todos los agentes y sus caracteristicas
+            '''
+            vecindad = self.obten_vecindad()
+            vecinos = []
+            for i in vecindad:
+                if malla[i[0],i[1]] != 0:
+                    # Guardamos lo que corresponde con el id del vecino
+                    vecinos.append(malla[i[0],i[1]])
+            return vecinos
