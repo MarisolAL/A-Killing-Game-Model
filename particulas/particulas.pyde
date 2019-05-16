@@ -29,7 +29,10 @@ class Particula:
         vecinos[self.id] = -1    
         self.vecinos = vecinos
         
-    def obten_vecindad(self, diametro):
+    def obten_vecindad(self, diametro=1):
+        '''Nota, esta funcion solo sirve por ahora
+        con diametro 1
+        '''
         vecindad = []
         x_m = self.x_max
         y_m = self.y_max
@@ -61,7 +64,19 @@ class Particula:
         #    7       O
         #    8       NO
         acomodado = False
-        posicion = random.randint(1,8)
+        celdas_posibles = self.obten_vecindad()
+        posicion = celdas_posibles[random.randint(0,len(celdas_posibles)]
         iteracion = 0
-        while(not acomodado and iteracion <10):        
-            # Damos 10 iteraciones por si el agente esta rodeado
+        while not acomodado and celdas_posibles:        
+            if malla[posicion[0],posicion[1]]==0:
+                #Esta vacia
+                malla[posicion[0],posicion[1]] = 1
+                malla[self.x,self.y] = 0 #Cambiamos los valores de la malla
+                self.x = posicion[0]
+                self.y = posicion[1]
+                acomodado = True
+            else:
+                celdas_posibles.remove(posicion)
+                posicion = celdas_posibles[random.randint(0,len(celdas_posibles)]
+        # Si no hay celdas disponibles, el agente no se mueve
+                
