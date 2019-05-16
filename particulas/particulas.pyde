@@ -99,3 +99,5 @@ class Particula:
                     # Guardamos lo que corresponde con el id del vecino
                     vecinos.append(malla[i[0],i[1]])
             return vecinos
+        
+        
