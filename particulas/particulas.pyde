@@ -5,8 +5,8 @@ class Particula:
     def __init__(self, id, x_max, y_max, tam_vecindad, malla=None,x0=None, y0=None):
         self.id = id # Esto nos ayudara para saber cual es la posicion de cada uno
         # en los arreglos de los vecinos 
-        self.x = x0 if x != None else random.randint(0,x_max)
-        self.y = y0 if y != None else random.randint(0,y_max)
+        self.x = x0 if x0 != None else random.randint(0,x_max)
+        self.y = y0 if y0 != None else random.randint(0,y_max)
         self.x_max = x_max
         self.y_max = y_max
         self.vecinos = [] # Vecinos de la particula, esta lista tendra la afinidad con cada uno
@@ -14,7 +14,7 @@ class Particula:
         self.sospechoso = None
         self.tam_vecindad = tam_vecindad # Radio de la vecindad de vision
         if malla:
-            malla[self.x, self.y] = id
+            malla[self.x][self.y] = id
         
     def llena_vecinos(self, total_vecinos):
         '''
@@ -38,7 +38,7 @@ class Particula:
         vecindad = []
         x_m = self.x_max
         y_m = self.y_max
-        for i in range(0,diametro + 1):
+        for i in range(0,diametro):
             v1 = [(self.x + 1 + i)% x_m , (self.y + i)%y_m] #N
             v2 = [(self.x - 1 + i)% x_m , (self.y + i)%y_m] #S
             v3 = [(self.x + 1+ i)% x_m , (self.y + 1 + i)% y_m] #NE
@@ -47,7 +47,7 @@ class Particula:
             v6 = [(self.x - 1 + i)% x_m , (self.y - 1 + i)% y_m] #SO
             v7 = [(self.x + i)% x_m  , (self.y + 1 + i)% y_m] #E
             v8 = [(self.x + i)% x_m  , (self.y - 1 + i)% y_m] #O
-            vecindad.append(v1,v2,v3,v4,v5,v6,v7,v8)
+            vecindad+= [v1,v2,v3,v4,v5,v6,v7,v8]
         return vecindad
         
     def mueve(self, malla):
@@ -70,34 +70,34 @@ class Particula:
         posicion = celdas_posibles[random.randint(0,len(celdas_posibles))]
         iteracion = 0
         while not acomodado and celdas_posibles:        
-            if malla[posicion[0],posicion[1]]==0:
+            if malla[posicion[0]][posicion[1]]==-1:
                 #Esta vacia
-                malla[posicion[0],posicion[1]] = self.id
-                malla[self.x,self.y] = 0 #Cambiamos los valores de la malla
+                malla[posicion[0]][posicion[1]] = self.id
+                malla[self.x][self.y] = -1 #Cambiamos los valores de la malla
                 self.x = posicion[0]
                 self.y = posicion[1]
                 acomodado = True
             else:
                 celdas_posibles.remove(posicion)
                 posicion = celdas_posibles[random.randint(0,len(celdas_posibles))]
-        # Si no hay celdas disponibles, el agente no se mueve
         
-        def desespera(self):
-            # Esta funcion se invoca cuando hay un estimulador de desesperacion
-            cantidad = random.randint(1,2)
-            self.desespera += cantidad
+    def desespera(self):
+        # Esta funcion se invoca cuando hay un estimulador de desesperacion
+        cantidad = random.randint(1,2)
+        self.desespera = (self.desespera + cantidad)%11
+        
             
-        def vecinos_cercanos(self, malla):
-            '''
-            Funcion que devuelve los vecinos cercanos al agente en cuestion.
-            jugadores es la lista que contiene a todos los agentes y sus caracteristicas
-            '''
-            vecindad = self.obten_vecindad()
-            vecinos = []
-            for i in vecindad:
-                if malla[i[0],i[1]] != 0:
-                    # Guardamos lo que corresponde con el id del vecino
-                    vecinos.append(malla[i[0],i[1]])
-            return vecinos
+    def vecinos_cercanos(self, malla):
+        '''
+        Funcion que devuelve los vecinos cercanos al agente en cuestion.
+        jugadores es la lista que contiene a todos los agentes y sus caracteristicas
+        '''
+        vecindad = self.obten_vecindad()
+        vecinos = []
+        for i in vecindad:
+            if malla[i[0]][i[1]] != -1:
+                #Guardamos lo que corresponde con el id del vecino
+                vecinos.append(malla[i[0]][i[1]])
+        return vecinos
         
         
