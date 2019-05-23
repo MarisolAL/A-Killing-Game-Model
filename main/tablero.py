@@ -21,13 +21,21 @@ class Tablero:
             vecindades = [None]*len(self.jugadores)
             for i in range(len(self.jugadores)):
                 vecindades[i] = self.jugadores[i].vecinos_cercanos()
-            for i in range(len(self.jugadores)):
-                vecinos_de_i = vecindades[i]
-                for j in vecinos_de_i:
-                    # Verificamos la lista de vecinos de cada jugador
-                    if vecindades[vecinos_de_i[j]] != -1:
-                        interactua(self.jugadores[i],self.jugadores[vecinos_de_i[j]])
-                    vecindades[vecinos_de_i[j]] = -1
+            for i in range(len(vecindades)):
+                vecindad_de_i = vecindades[i]
+                for j in range(len(vecindad_de_i)):
+                    # el vecino i ve a j
+                    vecino = vecindad_de_i[j]
+                    vecindad[vecino].remove(i)
+                    
+
+            #for i in range(len(self.jugadores)):
+             #   vecinos_de_i = vecindades[i]
+              #  for j in vecinos_de_i:
+               #     # Verificamos la lista de vecinos de cada jugador
+                #    if vecindades[vecinos_de_i[j]] != -1:
+                 #       interactua(self.jugadores[i],self.jugadores[vecinos_de_i[j]])
+                  #  vecindades[vecinos_de_i[j]] = -1
         
         def interactua(jugador_1, jugador_2):
             '''
@@ -64,5 +72,6 @@ class Tablero:
                 else:
                     jugador_1.vecinos[jugador_2.id] = (jugador_1.vecinos[jugador_2.id] + 1)%11
                     jugador_2.vecinos[jugador_1.id] = (jugador_2.vecinos[jugador_1.id] + 1)%11
-                
-                
+    
+tab = Tablero(20,20,15)
+tab.interactuar()
