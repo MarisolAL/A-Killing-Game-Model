@@ -5,8 +5,8 @@ class Particula:
     def __init__(self, id, x_max, y_max, tam_vecindad, malla=None,x0=None, y0=None):
         self.id = id # Esto nos ayudara para saber cual es la posicion de cada uno
         # en los arreglos de los vecinos 
-        self.x = x0 if x0 != None else random.randint(0,x_max)
-        self.y = y0 if y0 != None else random.randint(0,y_max)
+        self.x = x0 if x0 != None else random.randint(0,x_max-1)
+        self.y = y0 if y0 != None else random.randint(0,y_max-1)
         self.x_max = x_max
         self.y_max = y_max
         self.vecinos = [] # Vecinos de la particula, esta lista tendra la afinidad con cada uno
@@ -84,7 +84,9 @@ class Particula:
     def desespera(self):
         # Esta funcion se invoca cuando hay un estimulador de desesperacion
         cantidad = random.randint(1,2)
-        self.desespera = (self.desespera + cantidad)%11
+        self.desespera += cantidad
+        if self.desespera > 10: self.desespera = 10
+        if self.desespera < 0: self.desespera = 0
         
             
     def vecinos_cercanos(self, malla):
