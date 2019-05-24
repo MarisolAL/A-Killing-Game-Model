@@ -1,7 +1,7 @@
 from particulas import Particula
 from tablero import Tablero
 
-tablero = Tablero(20,20,10)
+tablero = Tablero(20,20,20)
 
 def setup():
     '''Hacer aqui todos los preparativos'''
@@ -24,3 +24,4 @@ def draw():
             #Dibujamos los cuadrados
             rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
     tablero.mueve_jugadores()
+    tablero.interactuar()

@@ -36,6 +36,7 @@ class Tablero:
                     jugador_2 = self.jugadores[vecindades[i][j]]
                     self.interactua(jugador_1, jugador_2)
         
+        
     def interactua(self, jugador_1, jugador_2):
         '''
         Funcion que aplica las reglas de interaccion
@@ -50,28 +51,37 @@ class Tablero:
             af2 = True
         if af1 and af2:
             #Ambas interacciones son positivas
-            jugador_1.vecinos[jugador_2.id] = (jugador_1.vecinos[jugador_2.id] + 1)%11
-            jugador_2.vecinos[jugador_1.id] = (jugador_2.vecinos[jugador_1.id] + 1)%11
-            jugador_1.desesperacion = (jugador_1.desesperacion -1)%11
-            jugador_2.desesperacion = (jugador_2.desesperacion -1)%11
+            jugador_1.vecinos[jugador_2.id] +=1
+            jugador_2.vecinos[jugador_1.id] +=1 
+            jugador_1.desesperacion -=1
+            jugador_2.desesperacion -= 1
         elif af1 and not af2:
             # El vecino con afinidad positiva la disminuye y el que 
             #tiene afinidad negativa la aumenta
-            jugador_1.vecinos[jugador_2.id] = (jugador_1.vecinos[jugador_2.id] - 1)%11
-            jugador_2.vecinos[jugador_1.id] = (jugador_2.vecinos[jugador_1.id] + 1)%11
+            jugador_1.vecinos[jugador_2.id] -=1
+            jugador_2.vecinos[jugador_1.id] +=1
         elif af2:
-            jugador_1.vecinos[jugador_2.id] = (jugador_1.vecinos[jugador_2.id] + 1)%11
-            jugador_2.vecinos[jugador_1.id] = (jugador_2.vecinos[jugador_1.id] - 1)%11
+            jugador_1.vecinos[jugador_2.id] +=1
+            jugador_2.vecinos[jugador_1.id] -=1
             
         else:
             if random.uniform(0,1)<= 0.7:
                 #Ambos vecinos disminuyen la afinidad con el otro con una probabilidad de 0.7
-                jugador_1.vecinos[jugador_2.id] = (jugador_1.vecinos[jugador_2.id] - 1)%11
-                jugador_2.vecinos[jugador_1.id] = (jugador_2.vecinos[jugador_1.id] - 1)%11
+                jugador_1.vecinos[jugador_2.id] -=1
+                jugador_2.vecinos[jugador_1.id] -=1
             else:
-                jugador_1.vecinos[jugador_2.id] = (jugador_1.vecinos[jugador_2.id] + 1)%11
-                jugador_2.vecinos[jugador_1.id] = (jugador_2.vecinos[jugador_1.id] + 1)%11
-    
+                jugador_1.vecinos[jugador_2.id] +=1
+                jugador_2.vecinos[jugador_1.id] +=1
+        #Ajustamos los valores a los rangos
+        if jugador_1.vecinos[jugador_2.id] > 10: jugador_1.vecinos[jugador_2.id] = 10
+        if jugador_2.vecinos[jugador_1.id] > 10: jugador_2.vecinos[jugador_1.id] = 10
+        if jugador_1.vecinos[jugador_2.id] < 0: jugador_1.vecinos[jugador_2.id] = 0
+        if jugador_2.vecinos[jugador_1.id] < 0: jugador_2.vecinos[jugador_1.id] = 0
+        if jugador_1.desesperacion <0 : jugador_1.desesperacion = 0
+        if jugador_2.desesperacion <0 : jugador_2.desesperacion = 0
+        if jugador_1.desesperacion >10 : jugador_1.desesperacion = 10
+        if jugador_2.desesperacion >10 : jugador_2.desesperacion = 10
+        
     def mueve_jugadores(self):
         for i in range(len(self.jugadores)):
             self.jugadores[i].mueve(self.tablero)
