@@ -67,7 +67,7 @@ class Particula:
         #    8       NO
         acomodado = False
         celdas_posibles = self.obten_vecindad()
-        posicion = celdas_posibles[random.randint(0,len(celdas_posibles))]
+        posicion = celdas_posibles[random.randint(0,len(celdas_posibles)-1)]
         iteracion = 0
         while not acomodado and celdas_posibles:        
             if malla[posicion[0]][posicion[1]]==-1:

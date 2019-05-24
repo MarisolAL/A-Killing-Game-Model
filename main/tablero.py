@@ -12,6 +12,7 @@ class Tablero:
             # Creamos a los jugadores, dentro del constructor ponemos en las 
             #celdas ocupadas el id del vecino correspondiente
             self.jugadores[i] = Particula(i,tam_x, tam_y, rango_vision, self.tablero)
+            self.jugadores[i].llena_vecinos(numero_jugadores)
             
     def interactuar(self):
         '''
@@ -21,15 +22,21 @@ class Tablero:
         vecindades = [None]*len(self.jugadores)
         for i in range(len(self.jugadores)):
             vecindades[i] = self.jugadores[i].vecinos_cercanos(self.tablero)
+        # Eliminamos los duplicados
         for i in range(len(vecindades)):
             vecindad_de_i = vecindades[i]
             for j in range(len(vecindad_de_i)):
-                #el vecino i ve a j
                 vecino = vecindad_de_i[j]
+                #print(vecindades[vecino],i)
                 vecindades[vecino].remove(i)
-            
+        for i in range(len(vecindades)):
+            if vecindades[i]!= []:
+                for j in range(len(vecindades[i])):
+                    jugador_1 = self.jugadores[i]
+                    jugador_2 = self.jugadores[vecindades[i][j]]
+                    self.interactua(jugador_1, jugador_2)
         
-    def interactua(jugador_1, jugador_2):
+    def interactua(self, jugador_1, jugador_2):
         '''
         Funcion que aplica las reglas de interaccion
         recibe las particulas que representan los jugadores
@@ -65,5 +72,15 @@ class Tablero:
                 jugador_1.vecinos[jugador_2.id] = (jugador_1.vecinos[jugador_2.id] + 1)%11
                 jugador_2.vecinos[jugador_1.id] = (jugador_2.vecinos[jugador_1.id] + 1)%11
     
-tab = Tablero(20,20,15)
+    def mueve_jugadores(self):
+        for i in range(len(self.jugadores)):
+            self.jugadores[i].mueve(self.tablero)
+    
+tab = Tablero(20,20,25)
 tab.interactuar()
+for i in range(len(tab.tablero)):
+    print(tab.tablero[i])
+print("-------------------")
+tab.mueve_jugadores()
+for i in range(len(tab.tablero)):
+    print(tab.tablero[i])
