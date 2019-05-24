@@ -79,7 +79,7 @@ class Particula:
                 acomodado = True
             else:
                 celdas_posibles.remove(posicion)
-                posicion = celdas_posibles[random.randint(0,len(celdas_posibles))]
+                posicion = celdas_posibles[random.randint(0,len(celdas_posibles)-1)]
         
     def desespera(self):
         # Esta funcion se invoca cuando hay un estimulador de desesperacion

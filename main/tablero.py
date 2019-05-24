@@ -75,12 +75,3 @@ class Tablero:
     def mueve_jugadores(self):
         for i in range(len(self.jugadores)):
             self.jugadores[i].mueve(self.tablero)
-    
-tab = Tablero(20,20,25)
-tab.interactuar()
-for i in range(len(tab.tablero)):
-    print(tab.tablero[i])
-print("-------------------")
-tab.mueve_jugadores()
-for i in range(len(tab.tablero)):
-    print(tab.tablero[i])
