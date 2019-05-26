@@ -83,10 +83,9 @@ class Particula:
         
     def desespera(self):
         # Esta funcion se invoca cuando hay un estimulador de desesperacion
-        cantidad = random.randint(1,2)
+        cantidad = random.randint(1,3)
         self.desesperacion += cantidad
-        if self.desesperacion > 10: self.desesperacion = 10
-        if self.desesperacion < 0: self.desesperacion = 0
+        if self.desesperacion > 20: self.desesperacion = 20
         
             
     def vecinos_cercanos(self, malla):

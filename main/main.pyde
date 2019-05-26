@@ -2,6 +2,7 @@ from particulas import Particula
 from tablero import Tablero
 
 tablero = Tablero(20,20,20)
+iteraciones = 0
 
 def setup():
     '''Hacer aqui todos los preparativos'''
@@ -12,8 +13,9 @@ def setup():
     
 def draw():
     '''Dibujar y actualizaciones del sistema '''
+    global iteraciones
     incentivo = False
-    if millis()%20 == 0:
+    if iteraciones%30 == 0:
         tablero.desespera()
         incentivo = True
     tam_cuadro = 200/20
@@ -23,7 +25,7 @@ def draw():
             if malla[i][j] != -1:
                 #Hay un jugador
                 if incentivo: 
-                    a = (250/10)*tablero.jugadores[malla[i][j]].desesperacion
+                    a = (250/20)*tablero.jugadores[malla[i][j]].desesperacion
                     fill(color(a+5,10,10)) 
                 else:
                     fill(color(0,210,100))
@@ -36,3 +38,4 @@ def draw():
     print("----------------------")
     tablero.mueve_jugadores()
     tablero.interactuar()
+    iteraciones += 1

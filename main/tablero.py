@@ -70,7 +70,12 @@ class Tablero:
     def ajusta_afinidad(self):
         '''Funcion que normaliza las afinidades'''
         for i in range(len(self.jugadores)):
-            self.jugadores[i].vecinos = map((lambda x: x),self.jugadores[i].vecinos) 
+            vec = self.jugadores[i].vecinos
+            for v in range(len(vec)):
+                if vec[v] > 100:
+                    vec[v] = 100
+                if vec[v]<0 and v!=-1:
+                    vec[v]=0
     
                 
                 
@@ -78,7 +83,16 @@ class Tablero:
     def ajusta_desesperacion(self):
         '''Funcion que mueve los niveles de desesperacion
         dada la afinidad'''
-        pass    
+        for i in self.jugadores:
+            # Vecinos validos
+            vecinos = filter((lambda x: True if x >0 else False),i.vecinos)
+            # Obtenemos el promedio de las interacciones
+            s = sum(vecinos)/len(vecinos)
+            if s>50:
+                cant = random.randint(0,2)
+                i.desesperacion -=  cant
+            if i.desesperacion < 0: i.desesperacion = 0
+        
     
     def mueve_jugadores(self):
         for i in range(len(self.jugadores)):
