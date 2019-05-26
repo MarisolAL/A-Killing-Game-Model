@@ -27,7 +27,7 @@ class Particula:
         '''
         vecinos = [0]*total_vecinos
         for i in range(0, total_vecinos):
-            vecinos[i] = float("{0:.3f}".format(random.uniform(0,1)))
+            vecinos[i] = random.randint(40,60)
         vecinos[self.id] = -1    
         self.vecinos = vecinos
         
@@ -84,9 +84,9 @@ class Particula:
     def desespera(self):
         # Esta funcion se invoca cuando hay un estimulador de desesperacion
         cantidad = random.randint(1,2)
-        self.desespera += cantidad
-        if self.desespera > 10: self.desespera = 10
-        if self.desespera < 0: self.desespera = 0
+        self.desesperacion += cantidad
+        if self.desesperacion > 10: self.desesperacion = 10
+        if self.desesperacion < 0: self.desesperacion = 0
         
             
     def vecinos_cercanos(self, malla):

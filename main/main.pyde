@@ -5,26 +5,34 @@ tablero = Tablero(20,20,20)
 
 def setup():
     '''Hacer aqui todos los preparativos'''
-    size(100,100)
+    size(200,200)
     stroke(50)
     background(0,0,0,0)
-    frameRate(2)
+    frameRate(3)
     
 def draw():
     '''Dibujar y actualizaciones del sistema '''
-    tam_cuadro = 100/20
+    incentivo = False
+    if millis()%20 == 0:
+        tablero.desespera()
+        incentivo = True
+    tam_cuadro = 200/20
     malla = tablero.tablero
     for i in range(len(malla)):
         for j in range(len(malla[i])):
             if malla[i][j] != -1:
                 #Hay un jugador
-                fill(color(0,210,100))
+                if incentivo: 
+                    a = (250/10)*tablero.jugadores[malla[i][j]].desesperacion
+                    fill(color(a+5,10,10)) 
+                else:
+                    fill(color(0,210,100))
             else:
                 fill(color(0,0,0))
             #Dibujamos los cuadrados
             rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
     for i in range(len(tablero.jugadores)):
-        print(tablero.jugadores[i].vecinos)
+        print(tablero.jugadores[i].vecinos, tablero.jugadores[i].desesperacion)
     print("----------------------")
     tablero.mueve_jugadores()
     tablero.interactuar()

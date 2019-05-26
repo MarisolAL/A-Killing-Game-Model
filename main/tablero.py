@@ -1,4 +1,4 @@
-from __future__ import division
+#from __future__ import division
 import random
 from particulas import Particula 
 
@@ -46,35 +46,34 @@ class Tablero:
         '''
         af1 = False
         af2 = False
-        if jugador_1.vecinos[jugador_2.id]>=0.5:
+        if jugador_1.vecinos[jugador_2.id]>=50:
             #Si la afinidad es positiva
             af1 = True
-        if jugador_2.vecinos[jugador_1.id]>=0.5:
+        if jugador_2.vecinos[jugador_1.id]>=50:
             af2 = True
         if af1 and af2:
             #Ambas interacciones son positivas, sumamos dos a cada afinidad
-            jugador_1.vecinos[jugador_2.id] +=2
-            jugador_2.vecinos[jugador_1.id] +=2 
+            jugador_1.vecinos[jugador_2.id] +=3
+            jugador_2.vecinos[jugador_1.id] +=3 
         elif af1 and not af2:
             # El vecino con afinidad positiva se mantiene
             # y el que tiene afinidad negativa la aumenta
-            jugador_2.vecinos[jugador_1.id] +=3
+            jugador_2.vecinos[jugador_1.id] +=5
+            jugador_1.vecinos[jugador_2.id] -=5
         elif af2:
-            jugador_1.vecinos[jugador_2.id] +=3
+            jugador_2.vecinos[jugador_1.id] -=5
+            jugador_1.vecinos[jugador_2.id] +=5
         else:
-            jugador_1.vecinos[jugador_2.id] +=1
-            jugador_2.vecinos[jugador_1.id] +=1
+            jugador_1.vecinos[jugador_2.id] -=1
+            jugador_2.vecinos[jugador_1.id] -=1
         
     def ajusta_afinidad(self):
         '''Funcion que normaliza las afinidades'''
-        m = 0
         for i in range(len(self.jugadores)):
-            max_a = max(self.jugadores[i].vecinos)
-            m = max(m,max_a)
-        # Normalizamos todas las afinidades
-        for i in range(len(self.jugadores)):
-            m = max(self.jugadores[i].vecinos)
-            self.jugadores[i].vecinos = map((lambda x: float("{0:.3f}".format(x))),map((lambda x: x/m if x>=0 else x),self.jugadores[i].vecinos))
+            self.jugadores[i].vecinos = map((lambda x: x),self.jugadores[i].vecinos) 
+    
+                
+                
     
     def ajusta_desesperacion(self):
         '''Funcion que mueve los niveles de desesperacion
@@ -84,3 +83,7 @@ class Tablero:
     def mueve_jugadores(self):
         for i in range(len(self.jugadores)):
             self.jugadores[i].mueve(self.tablero)
+            
+    def desespera(self):
+        for i in self.jugadores:
+            i.desespera()
