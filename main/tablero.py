@@ -1,3 +1,4 @@
+from __future__ import division
 import random
 from particulas import Particula 
 
@@ -27,7 +28,6 @@ class Tablero:
             vecindad_de_i = vecindades[i]
             for j in range(len(vecindad_de_i)):
                 vecino = vecindad_de_i[j]
-                #print(vecindades[vecino],i)
                 vecindades[vecino].remove(i)
         for i in range(len(vecindades)):
             if vecindades[i]!= []:
@@ -35,6 +35,8 @@ class Tablero:
                     jugador_1 = self.jugadores[i]
                     jugador_2 = self.jugadores[vecindades[i][j]]
                     self.interactua(jugador_1, jugador_2)
+        self.ajusta_afinidad()
+        self.ajusta_desesperacion()
         
         
     def interactua(self, jugador_1, jugador_2):
@@ -44,44 +46,41 @@ class Tablero:
         '''
         af1 = False
         af2 = False
-        if jugador_1.vecinos[jugador_2.id]>=5:
+        if jugador_1.vecinos[jugador_2.id]>=0.5:
             #Si la afinidad es positiva
             af1 = True
-        if jugador_2.vecinos[jugador_1.id]>=5:
+        if jugador_2.vecinos[jugador_1.id]>=0.5:
             af2 = True
         if af1 and af2:
-            #Ambas interacciones son positivas
-            jugador_1.vecinos[jugador_2.id] +=1
-            jugador_2.vecinos[jugador_1.id] +=1 
-            jugador_1.desesperacion -=1
-            jugador_2.desesperacion -= 1
+            #Ambas interacciones son positivas, sumamos dos a cada afinidad
+            jugador_1.vecinos[jugador_2.id] +=2
+            jugador_2.vecinos[jugador_1.id] +=2 
         elif af1 and not af2:
-            # El vecino con afinidad positiva la disminuye y el que 
-            #tiene afinidad negativa la aumenta
-            jugador_1.vecinos[jugador_2.id] -=1
-            jugador_2.vecinos[jugador_1.id] +=1
+            # El vecino con afinidad positiva se mantiene
+            # y el que tiene afinidad negativa la aumenta
+            jugador_2.vecinos[jugador_1.id] +=3
         elif af2:
-            jugador_1.vecinos[jugador_2.id] +=1
-            jugador_2.vecinos[jugador_1.id] -=1
-            
+            jugador_1.vecinos[jugador_2.id] +=3
         else:
-            if random.uniform(0,1)<= 0.7:
-                #Ambos vecinos disminuyen la afinidad con el otro con una probabilidad de 0.7
-                jugador_1.vecinos[jugador_2.id] -=1
-                jugador_2.vecinos[jugador_1.id] -=1
-            else:
-                jugador_1.vecinos[jugador_2.id] +=1
-                jugador_2.vecinos[jugador_1.id] +=1
-        #Ajustamos los valores a los rangos
-        if jugador_1.vecinos[jugador_2.id] > 10: jugador_1.vecinos[jugador_2.id] = 10
-        if jugador_2.vecinos[jugador_1.id] > 10: jugador_2.vecinos[jugador_1.id] = 10
-        if jugador_1.vecinos[jugador_2.id] < 0: jugador_1.vecinos[jugador_2.id] = 0
-        if jugador_2.vecinos[jugador_1.id] < 0: jugador_2.vecinos[jugador_1.id] = 0
-        if jugador_1.desesperacion <0 : jugador_1.desesperacion = 0
-        if jugador_2.desesperacion <0 : jugador_2.desesperacion = 0
-        if jugador_1.desesperacion >10 : jugador_1.desesperacion = 10
-        if jugador_2.desesperacion >10 : jugador_2.desesperacion = 10
+            jugador_1.vecinos[jugador_2.id] +=1
+            jugador_2.vecinos[jugador_1.id] +=1
         
+    def ajusta_afinidad(self):
+        '''Funcion que normaliza las afinidades'''
+        m = 0
+        for i in range(len(self.jugadores)):
+            max_a = max(self.jugadores[i].vecinos)
+            m = max(m,max_a)
+        # Normalizamos todas las afinidades
+        for i in range(len(self.jugadores)):
+            m = max(self.jugadores[i].vecinos)
+            self.jugadores[i].vecinos = map((lambda x: float("{0:.3f}".format(x))),map((lambda x: x/m if x>=0 else x),self.jugadores[i].vecinos))
+    
+    def ajusta_desesperacion(self):
+        '''Funcion que mueve los niveles de desesperacion
+        dada la afinidad'''
+        pass    
+    
     def mueve_jugadores(self):
         for i in range(len(self.jugadores)):
             self.jugadores[i].mueve(self.tablero)

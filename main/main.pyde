@@ -23,5 +23,8 @@ def draw():
                 fill(color(0,0,0))
             #Dibujamos los cuadrados
             rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
+    for i in range(len(tablero.jugadores)):
+        print(tablero.jugadores[i].vecinos)
+    print("----------------------")
     tablero.mueve_jugadores()
     tablero.interactuar()

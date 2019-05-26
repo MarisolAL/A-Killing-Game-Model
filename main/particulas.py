@@ -27,7 +27,7 @@ class Particula:
         '''
         vecinos = [0]*total_vecinos
         for i in range(0, total_vecinos):
-            vecinos[i] = random.randint(4,6)
+            vecinos[i] = float("{0:.3f}".format(random.uniform(0,1)))
         vecinos[self.id] = -1    
         self.vecinos = vecinos
         
@@ -102,4 +102,5 @@ class Particula:
                 vecinos.append(malla[i[0]][i[1]])
         return vecinos
         
+ 
         
