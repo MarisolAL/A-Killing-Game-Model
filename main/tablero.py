@@ -9,6 +9,8 @@ class Tablero:
         self.y_m = tam_y
         self.tablero = [[-1 for x in range(tam_x)] for y in range(tam_y)]
         self.jugadores = [None]*numero_jugadores
+        self.fase = 0 # Fase 0 = interaccion, Fase 1 = Asesinato, Fase 2 = juicio
+        self.asesino = -1 # Id del que va a asesinar
         for i in range(numero_jugadores):
             # Creamos a los jugadores, dentro del constructor ponemos en las 
             #celdas ocupadas el id del vecino correspondiente
@@ -101,3 +103,12 @@ class Tablero:
     def desespera(self):
         for i in self.jugadores:
             i.desespera()
+            
+    def check_asesinato(self):
+        '''Funcion que revisa si se lleva a cabo un asesinato'''
+        jugadores = self.jugadores[:]
+        random.shuffle(jugadores)
+        for i in jugadores:
+            if i.desesperacion >= 20:
+                self.fase = 1
+                self.asesino = i.id

@@ -21,24 +21,25 @@ def draw():
         incentivo = True
     tam_cuadro = 200/20
     malla = tablero.tablero
-    for i in range(len(malla)):
-        for j in range(len(malla[i])):
-            if malla[i][j] != -1:
-                #Hay un jugador
-                if incentivo: 
-                    a = (250/20)*tablero.jugadores[malla[i][j]].desesperacion
-                    fill(color(a+5,10,10)) 
+    if tablero.fase == 0:
+        for i in range(len(malla)):
+            for j in range(len(malla[i])):
+                if malla[i][j] != -1:
+                    #Hay un jugador
+                    if incentivo: 
+                        a = (250/20)*tablero.jugadores[malla[i][j]].desesperacion
+                        fill(color(a+5,10,10)) 
+                    else:
+                        fill(color(0,210,100))
                 else:
-                    fill(color(0,210,100))
-            else:
-                fill(color(0,0,0))
-            #Dibujamos los cuadrados
-            rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
+                    fill(color(0,0,0))
+                #Dibujamos los cuadrados
+                rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
     #for i in range(len(tablero.jugadores)):
         #print(tablero.jugadores[i].vecinos, tablero.jugadores[i].desesperacion)
     #print("----------------------")
     
-    print(tablero.jugadores[7].desesperacion)
+    #print(tablero.jugadores[7].desesperacion,end=',')
     tablero.mueve_jugadores()
     tablero.interactuar()
     iteraciones += 1
