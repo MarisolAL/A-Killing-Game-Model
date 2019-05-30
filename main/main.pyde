@@ -1,3 +1,4 @@
+from __future__ import print_function
 from particulas import Particula
 from tablero import Tablero
 
@@ -12,7 +13,7 @@ def setup():
     frameRate(3)
     
 def draw():
-    '''Dibujar y actualizaciones del sistema '''
+    '''Dibujar y actualizar del sistema '''
     global iteraciones
     incentivo = False
     if iteraciones%30 == 0:
@@ -33,9 +34,11 @@ def draw():
                 fill(color(0,0,0))
             #Dibujamos los cuadrados
             rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
-    for i in range(len(tablero.jugadores)):
-        print(tablero.jugadores[i].vecinos, tablero.jugadores[i].desesperacion)
-    print("----------------------")
+    #for i in range(len(tablero.jugadores)):
+        #print(tablero.jugadores[i].vecinos, tablero.jugadores[i].desesperacion)
+    #print("----------------------")
+    
+    print(tablero.jugadores[7].desesperacion)
     tablero.mueve_jugadores()
     tablero.interactuar()
     iteraciones += 1
