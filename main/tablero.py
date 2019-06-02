@@ -125,7 +125,7 @@ class Tablero:
         random.shuffle(jugadores)
         for i in jugadores:
             if i.desesperacion >= 20:
-                #self.fase = 1
+                self.fase = 1
                 self.asesino = i.id
                 print self.asesino
                 break
