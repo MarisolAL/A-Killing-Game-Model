@@ -35,11 +35,40 @@ def draw():
                     fill(color(0,0,0))
                 #Dibujamos los cuadrados
                 rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
+    if tablero.fase == 1:
+        for i in range(len(malla)):
+            for j in range(len(malla[i])):
+                if malla[i][j] != -1:
+                    #Hay un jugador
+                    if malla[i][j] == tablero.asesino : 
+                        fill(color(155,10,10)) 
+                    elif malla[i][j] == tablero.asesinado:
+                        fill(color(155,155,10))
+                    else:
+                        fill(color(100,50,100))
+                else:
+                    fill(color(0,0,0))
+                #Dibujamos los cuadrados
+                rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
+    with open("desesp_1jug.txt", "a") as txt:
+        txt.write(str(tablero.jugadores[7].desesperacion) + ", ")
+    des_sum = 0
+    for i in tablero.jugadores:
+        des_sum += i.desesperacion
+    with open("desesp_sis.txt", "a") as txt:
+        txt.write(str(des_sum) + ", ")
+    prom = 0
+    for i in tablero.jugadores:
+        vec = filter((lambda x: True if x >=0 else False),i.vecinos)
+        s = sum(vec)
+        prom += s/len(vec)
+    with open("afinidad.txt", "a") as txt:
+        txt.write(str(prom/len(tablero.jugadores)) + ", ")
     #for i in range(len(tablero.jugadores)):
         #print(tablero.jugadores[i].vecinos, tablero.jugadores[i].desesperacion)
     #print("----------------------")
     
     #print(tablero.jugadores[7].desesperacion,end=',')
     tablero.mueve_jugadores()
-    tablero.interactuar()
+    tablero.run()
     iteraciones += 1

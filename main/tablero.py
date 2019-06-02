@@ -11,12 +11,24 @@ class Tablero:
         self.jugadores = [None]*numero_jugadores
         self.fase = 0 # Fase 0 = interaccion, Fase 1 = Asesinato, Fase 2 = juicio
         self.asesino = -1 # Id del que va a asesinar
+        self.asesinado = -1
         for i in range(numero_jugadores):
             # Creamos a los jugadores, dentro del constructor ponemos en las 
             #celdas ocupadas el id del vecino correspondiente
             self.jugadores[i] = Particula(i,tam_x, tam_y, rango_vision, self.tablero)
             self.jugadores[i].llena_vecinos(numero_jugadores)
             
+    def run(self):
+        if self.fase == 0:
+            self.interactuar()      
+        if self.fase == 1:
+            self.asesinato()
+        if self.fase == 2:
+            # Juicio
+            a = 0
+            
+                  
+    
     def interactuar(self):
         '''
         Funcion que se dedica de verificar las interacciones entre los agentes
@@ -24,7 +36,10 @@ class Tablero:
         '''
         vecindades = [None]*len(self.jugadores)
         for i in range(len(self.jugadores)):
-            vecindades[i] = self.jugadores[i].vecinos_cercanos(self.tablero)
+            if self.jugadores[i].vivo:
+                vecindades[i] = self.jugadores[i].vecinos_cercanos(self.tablero)
+            else:
+                vecindades[i] = []
         # Eliminamos los duplicados
         for i in range(len(vecindades)):
             vecindad_de_i = vecindades[i]
@@ -39,6 +54,7 @@ class Tablero:
                     self.interactua(jugador_1, jugador_2)
         self.ajusta_afinidad()
         self.ajusta_desesperacion()
+        self.check_asesinato()
         
         
     def interactua(self, jugador_1, jugador_2):
@@ -70,7 +86,7 @@ class Tablero:
             jugador_2.vecinos[jugador_1.id] -=1
         
     def ajusta_afinidad(self):
-        '''Funcion que normaliza las afinidades'''
+        '''Funcion que ajusta los limites de las afinidades'''
         for i in range(len(self.jugadores)):
             vec = self.jugadores[i].vecinos
             for v in range(len(vec)):
@@ -78,10 +94,7 @@ class Tablero:
                     vec[v] = 100
                 if vec[v]<0 and v!=-1:
                     vec[v]=0
-    
-                
-                
-    
+
     def ajusta_desesperacion(self):
         '''Funcion que mueve los niveles de desesperacion
         dada la afinidad'''
@@ -98,11 +111,13 @@ class Tablero:
     
     def mueve_jugadores(self):
         for i in range(len(self.jugadores)):
-            self.jugadores[i].mueve(self.tablero)
+            if self.jugadores[i].vivo :
+                self.jugadores[i].mueve(self.tablero)
             
     def desespera(self):
         for i in self.jugadores:
-            i.desespera()
+            if i.vivo:
+                i.desespera()
             
     def check_asesinato(self):
         '''Funcion que revisa si se lleva a cabo un asesinato'''
@@ -110,5 +125,19 @@ class Tablero:
         random.shuffle(jugadores)
         for i in jugadores:
             if i.desesperacion >= 20:
-                self.fase = 1
+                #self.fase = 1
                 self.asesino = i.id
+                print self.asesino
+                break
+            
+    def asesinato(self, asesino, asesinado):
+        '''Funcion que lleva a cabo el asesinato'''
+        asesinado.muere()
+        id = asesinado.id
+        self.asesinado = id
+        for i in jugadores:
+            if i.vivo:
+                i.vecinos[id] = -1
+        
+        
+                

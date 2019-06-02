@@ -9,6 +9,7 @@ class Particula:
         self.y = y0 if y0 != None else random.randint(0,y_max-1)
         self.x_max = x_max
         self.y_max = y_max
+        self.vivo = True
         self.vecinos = [] # Vecinos de la particula, esta lista tendra la afinidad con cada uno
         self.desesperacion = 0
         self.sospechoso = None
@@ -101,5 +102,10 @@ class Particula:
                 vecinos.append(malla[i[0]][i[1]])
         return vecinos
         
- 
+    def muere(self):
+        '''Funcion que modela la muerte de un agente'''
+        self.vivo = False
+        self.x = -100
+        self.y = -100
+        self.desesperacion = 0
         
