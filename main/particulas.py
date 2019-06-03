@@ -108,4 +108,5 @@ class Particula:
         self.x = -100
         self.y = -100
         self.desesperacion = 0
+        self.sospechoso = None
         

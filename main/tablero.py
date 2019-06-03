@@ -13,7 +13,9 @@ class Tablero:
         self.asesino = -1 # Id del que va a asesinar
         self.asesinado = -1
         self.testigo = -1
-        self.tiempo_restante_juicio = 30
+        self.x_vic = -1
+        self.y_vic = -1
+        self.tiempo_restante_juicio = 35
         for i in range(numero_jugadores):
             # Creamos a los jugadores, dentro del constructor ponemos en las 
             #celdas ocupadas el id del vecino correspondiente
@@ -38,14 +40,16 @@ class Tablero:
                     for i in self.jugadores:
                         if i.vivo:
                             i.vecinos[self.asesino] = -1
+                            i.sospechoso = -1
                 for i in range(self.x_m):
                     for j in range(self.y_m):
                         if self.tablero[i][j] == self.asesinado:
                             self.tablero[i][j] = -1
                         if self.tablero[i][j] == self.asesino:
                             self.tablero[i][j] = -1
-                
-                self.tiempo_restante_juicio = 30
+                self.x_vic = -1
+                self.y_vic = -1
+                self.tiempo_restante_juicio = 35
                 self.asesino = -1
                 self.asesinado = -1
                 self.fase = 0
@@ -72,7 +76,7 @@ class Tablero:
             vecindad_de_i = vecindades[i]
             for j in range(len(vecindad_de_i)):
                 vecino = vecindad_de_i[j]
-                if i in vecindades[vecino]:
+                if i in vecindades[vecino] or not self.jugadores[i].vivo:
                     vecindades[vecino].remove(i)
         for i in range(len(vecindades)):
             if vecindades[i]!= []:
@@ -155,10 +159,11 @@ class Tablero:
         jugadores = self.jugadores[:]
         random.shuffle(jugadores)
         for i in jugadores:
-            if i.desesperacion >= 20:
-                self.fase = 1
-                self.asesino = i.id
-                break
+            if i.vivo:
+                if i.desesperacion >= 20:
+                    self.fase = 1
+                    self.asesino = i.id
+                    break
             
     def acecha_presa(self):
         '''Funcion que toma un vecino contiguo al asesino
@@ -184,6 +189,9 @@ class Tablero:
             
     def asesinato(self, asesino, asesinado):
         '''Funcion que lleva a cabo el asesinato'''
+        self.x_vic = asesinado.x
+        self.y_vic = asesinado.y
+        self.tablero[asesinado.x][asesinado.y] = -1
         asesinado.muere()
         id = asesinado.id
         self.asesinado = id

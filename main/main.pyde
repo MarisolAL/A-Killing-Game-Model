@@ -30,20 +30,43 @@ def fase_1(malla,tam_cuadro):
                     #Hay un jugador
                     if malla[i][j] == tablero.asesino : 
                         fill(color(155,10,10)) 
-                    elif malla[i][j] == tablero.asesinado:
-                        fill(color(155,155,10))
+                    #elif malla[i][j] == tablero.asesinado:
+                     #   fill(color(155,155,10))
                     else:
                         fill(color(100,50,100))
                 else:
                     fill(color(0,0,0))
                 #Dibujamos los cuadrados
                 rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
+    fill(color(155,155,10))
+    rect(tablero.x_vic*tam_cuadro, tablero.y_vic*tam_cuadro, tam_cuadro, tam_cuadro)
+                
+def fase_2(malla,tam_cuadro):
+    a = colores[tablero.asesino%len(colores)]
+    for i in range(len(malla)):
+        for j in range(len(malla[i])):
+            if malla[i][j] != -1:
+                #Hay un jugador
+                if malla[i][j] == tablero.asesino : 
+                    fill(color(155,10,10)) 
+                else:
+                    if tablero.jugadores[malla[i][j]].sospechoso != -1:
+                        fill(a)
+                    else:
+                        fill(color(100,150,200))
+            else:
+                fill(color(0,0,0))
+            #Dibujamos los cuadrados
+            rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
+    fill(color(155,155,10))
+    rect(tablero.x_vic*tam_cuadro, tablero.y_vic*tam_cuadro, tam_cuadro, tam_cuadro)
+                
 def setup():
     '''Hacer aqui todos los preparativos'''
     size(200,200)
     stroke(50)
-    background(0,0,0,0)
-    frameRate(3)
+    background(0,0,0)
+    frameRate(5)
     
 def draw():
     '''Dibujar y actualizar del sistema '''
@@ -59,28 +82,14 @@ def draw():
     if tablero.fase == 1:
         fase_1(malla,tam_cuadro)
     if tablero.fase == 2:
-        a = colores[tablero.asesino%len(colores)]
-        for i in range(len(malla)):
-            for j in range(len(malla[i])):
-                if malla[i][j] != -1:
-                    #Hay un jugador
-                    if malla[i][j] == tablero.asesino : 
-                        fill(color(155,10,10)) 
-                    elif malla[i][j] == tablero.asesinado:
-                        fill(color(155,155,10))
-                    else:
-                        if tablero.jugadores[malla[i][j]].sospechoso != -1:
-                            fill(a)
-                        else:
-                            fill(color(100,150,200))
-                else:
-                    fill(color(0,0,0))
-                #Dibujamos los cuadrados
-                rect(i*tam_cuadro, j*tam_cuadro, tam_cuadro, tam_cuadro)
+        fase_2(malla,tam_cuadro)
         for i in tablero.jugadores:
-            print(i.sospechoso,end=',')
-        print("    Asesino = ",tablero.asesino,"\n")
-    if tablero.fase != 2:            
+            if i.sospechoso != None:
+                print(i.sospechoso,end=',')
+            else:
+                print("*",end=',')
+        print("\n")
+    if tablero.fase == 0:            
         print(max(map((lambda x: x.desesperacion),tablero.jugadores)))
     #with open("desesp_1jug.txt", "a") as txt:
     #    txt.write(str(tablero.jugadores[7].desesperacion) + ", ")
