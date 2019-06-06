@@ -12,7 +12,6 @@ class Tablero:
         self.fase = 0 # Fase 0 = interaccion, Fase 1 = Asesinato, Fase 2 = juicio
         self.asesino = -1 # Id del que va a asesinar
         self.asesinado = -1
-        self.testigo = -1
         self.x_vic = -1
         self.y_vic = -1
         self.tiempo_restante_juicio = 35
@@ -35,7 +34,7 @@ class Tablero:
                 votos_correctos = len(filter((lambda x: True if x.sospechoso == self.asesino else False),self.jugadores))
                 jugadores_vivos = len(filter((lambda x: True if x.vivo else False),self.jugadores))
                 if votos_correctos > jugadores_vivos/2:
-                    print("CORRECTOOOOO")
+                    #print("CORRECTOOOOO")
                     self.jugadores[self.asesino].muere()
                     for i in self.jugadores:
                         if i.vivo:
@@ -205,7 +204,6 @@ class Tablero:
         jugadores_cercanos.remove(self.jugadores[self.asesinado])
         jugadores_cercanos.sort(key=self.distancia_del_asesinato)
         self.jugadores[jugadores_cercanos[0].id].sospechoso = self.asesino
-        self.testigo = self.jugadores[jugadores_cercanos[0].id].id
         self.desespera()
     
     def propaga_culpable(self, jugador_1, jugador_2):
