@@ -64,7 +64,7 @@ def fase_2(malla,tam_cuadro):
                 
 def setup():
     '''Hacer aqui todos los preparativos'''
-    size(800,800)
+    size(200,200)
     stroke(50)
     background(0,0,0)
     frameRate(5)
@@ -77,7 +77,7 @@ def draw():
     if iteraciones%30 == 0:
         tablero.desespera()
         incentivo = True
-    tam_cuadro = 800/20
+    tam_cuadro = 200/20
     malla = tablero.tablero
     if tablero.fase == 0:
         fase_0(malla,tam_cuadro,incentivo)
