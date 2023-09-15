@@ -9,23 +9,23 @@ class Particle:
     ----------
     id: int
         ID of the particle
-    x: Int
+    x: int
         Coordinate x of the particle
-    y: Int
+    y: int
         Coordinate y of the particle
-    x_max: Int
+    x_max: int
         Maximum coordinate x that the particle x value can have
-    y_max: Int
+    y_max: int
         Maximum coordinate y that the particle y value can have
     alive: bool
         Boolean that records the living state of the particle
     neighbors: list
         List of the particle's affinity with the neighbors
-    despair: Int
+    despair: int
         Number that represents the despair or stress level of the particle
-    suspicious:
+    suspicious: int
         ID of the particle that the agent suspects committed the crime
-    neighborhood_size: Int
+    neighborhood_size: int
         Size of the neighborhood vision
     """
 
