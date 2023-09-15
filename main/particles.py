@@ -24,7 +24,7 @@ class Particle:
     despair: Int
         Number that represents the despair or stress level of the particle
     suspicious:
-
+        ID of the particle that the agent suspects committed the crime
     neighborhood_size: Int
         Size of the neighborhood vision
     """
