@@ -1,0 +1,5 @@
+.idea/
+main/__pycache__/
+test/__pycache__/
+main/*.class
+*.class
