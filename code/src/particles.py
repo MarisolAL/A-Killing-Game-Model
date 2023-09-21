@@ -80,9 +80,10 @@ class Particle:
         neighbors[self.id] = -1
         self.neighbors = neighbors
 
-    def calculate_neighborhood(self, diameter=1):  # TODO: For the moment only works with diameter = 1
+    def calculate_neighborhood(self, diameter=1):
         """
-        Function that calculates the coordinates that belong to the particle neighborhood
+        Function that calculates the coordinates that belong to the particle neighborhood according to
+        the diameter.
 
         Parameters
         ----------
@@ -94,53 +95,52 @@ class Particle:
             The coordinates that represent the neighborhood
         """
         neighborhood = []
-        x_m = self.x_max
-        y_m = self.y_max
-        for i in range(0, diameter):
-            v1 = [(self.x + 1 + i) % x_m, (self.y + i) % y_m]  # N
-            v2 = [(self.x - 1 + i) % x_m, (self.y + i) % y_m]  # S
-            v3 = [(self.x + 1 + i) % x_m, (self.y + 1 + i) % y_m]  # NE
-            v4 = [(self.x + 1 + i) % x_m, (self.y - 1 + i) % y_m]  # NW
-            v5 = [(self.x - 1 + i) % x_m, (self.y + 1 + i) % y_m]  # SE
-            v6 = [(self.x - 1 + i) % x_m, (self.y - 1 + i) % y_m]  # SW
-            v7 = [(self.x + i) % x_m, (self.y + 1 + i) % y_m]  # E
-            v8 = [(self.x + i) % x_m, (self.y - 1 + i) % y_m]  # W
-            neighborhood += [v1, v2, v3, v4, v5, v6, v7, v8]
+        x_min = self.x - diameter
+        x_max = self.x + diameter + 1
+        y_min = self.y - diameter
+        y_max = self.y + diameter + 1
+        if x_min < 0:
+            x_min = 0
+        if x_max > self.x_max:
+            x_max = self.x_max
+        if y_min < 0:
+            y_min = 0
+        if y_max > self.y_max:
+            y_max = self.y_max
+        for i in range(x_min, x_max):
+            for j in range(y_min, y_max):
+                if [i, j] != [self.x, self.y]:
+                    neighborhood.append([i, j])
         return neighborhood
 
-    def move(self, world_array):
+    def move(self, world_array, diameter=1):
         """
         Function that randomly moves a particle into a new free space. `world_array` is the board
-        where the interactions are happening.
+        where the interactions are happening, if there is no free space, then the particle stays in the same
+        coordinate.
         Parameters
         ----------
         world_array: list
             Array with all the available spaces and the particles that represents the model of the world
+        diameter: int
+         Diameter used to calculate the available coordinates to move
         """
-        # Number Direction
-        #    1       N
-        #    2       NE
-        #    3       E
-        #    4       SE
-        #    5       S
-        #    6       SW
-        #    7       W
-        #    8       NW
         position_settled = False
-        posible_spaces = self.calculate_neighborhood()
-        position = posible_spaces[random.randint(0, len(posible_spaces) - 1)]
-        iteration = 0
+        posible_spaces = self.calculate_neighborhood(diameter)
+        random.shuffle(posible_spaces)
+        position = posible_spaces[0]
         while not position_settled and posible_spaces:
             if world_array[position[0]][position[1]] == -1:
                 # The position is empty
                 world_array[position[0]][position[1]] = self.id
-                world_array[self.x][self.y] = -1  # Shuffle the values of `world_array`
+                world_array[self.x][self.y] = -1
                 self.x = position[0]
                 self.y = position[1]
                 position_settled = True
             else:
                 posible_spaces.remove(position)
-                position = posible_spaces[random.randint(0, len(posible_spaces) - 1)]  # TODO: Check using shuffle
+                if posible_spaces:
+                    position = posible_spaces[0]
 
     def update_despair(self):
         """
@@ -164,7 +164,7 @@ class Particle:
         list
             All the neighbors in the neighborhood
         """
-        neighborhood = self.calculate_neighborhood()
+        neighborhood = self.calculate_neighborhood(self.neighborhood_size)
         neighbors = []
         for i in neighborhood:
             if world_array[i[0]][i[1]] != -1:
