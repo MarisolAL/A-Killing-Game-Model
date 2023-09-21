@@ -68,4 +68,4 @@ class ParticleTest(unittest.TestCase):
         neighbors = p.calculate_near_neighbors(world)
         self.assertEqual(len(neighbors), 2, 'The world has 2 neighbors near the particle')
         neighbors.sort()
-        self.assertEqual(neighbors, [2, 5]) 
+        self.assertEqual(neighbors, [2, 5])
