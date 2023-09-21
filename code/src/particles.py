@@ -61,7 +61,7 @@ class Particle:
         self.suspicious = None
         self.neighborhood_size = neighborhood_size  # Neighborhood vision size
         if world_array:
-            world_array[self.x][self.y] = id
+            world_array[self.x][self.y] = self.id
 
     def fill_affinity_list(self, neighbors_amount):
         """
@@ -72,7 +72,7 @@ class Particle:
         Parameters
         ----------
         neighbors_amount: int
-            Total number of neighbors
+            Total number of neighbors, including itself
         """
         neighbors = [0] * neighbors_amount
         for i in range(0, neighbors_amount):
@@ -142,7 +142,7 @@ class Particle:
                 posible_spaces.remove(position)
                 position = posible_spaces[random.randint(0, len(posible_spaces) - 1)]  # TODO: Check using shuffle
 
-    def despair(self):
+    def update_despair(self):
         """
         Function that modifies the `despair` level of a particle, this happens when there is an incentive. The
         maximum amount is 20.

@@ -58,7 +58,6 @@ class Board:
         self.corpse_y = -1
         self.time_left = 35
         self.murder = None
-        print(self.players)
         for i in range(players_amount):
             self.players.append(Particle(i, x_size, y_size, vision_size, self.board))  # TODO: check
             self.players[i].fill_affinity_list(players_amount)
@@ -189,7 +188,7 @@ class Board:
         """
         for i in self.players:
             if i.alive:
-                i.despair()
+                i.update_despair()
 
     def distance_from_murder(self, player):
         """
