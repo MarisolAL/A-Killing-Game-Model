@@ -59,3 +59,13 @@ class ParticleTest(unittest.TestCase):
         p_1.move(world_2, 2)
         self.assertEqual([p_1.x, p_1.y], [1, 1], 'Because world does not have free spaces, then the particle stays'
                                                  'in the same cell')
+
+    def test_calculate_near_neighbors(self):
+        world = [[-1 for _ in range(5)] for _ in range(5)]
+        world[0][0] = 2
+        world[0][1] = 5
+        p = Particle(1, 5, 5, 2, world, 1, 1)
+        neighbors = p.calculate_near_neighbors(world)
+        self.assertEqual(len(neighbors), 2, 'The world has 2 neighbors near the particle')
+        neighbors.sort()
+        self.assertEqual(neighbors, [2, 5]) 

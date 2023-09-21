@@ -162,7 +162,7 @@ class Particle:
         Returns
         -------
         list
-            All the neighbors in the neighborhood
+            All the neighbors ID's that are located in the neighborhood
         """
         neighborhood = self.calculate_neighborhood(self.neighborhood_size)
         neighbors = []
