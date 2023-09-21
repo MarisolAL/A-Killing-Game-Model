@@ -50,15 +50,17 @@ class Board:
         self.x_m = x_size
         self.y_m = y_size
         self.board = [[-1 for x in range(x_size)] for y in range(y_size)]
-        self.players = [None] * players_amount
+        self.players = []
         self.phase = 0
         self.killer = -1
         self.victim = -1
         self.corpse_x = -1
         self.corpse_y = -1
         self.time_left = 35
+        self.murder = None
+        print(self.players)
         for i in range(players_amount):
-            self.players[i] = Particle(i, x_size, y_size, vision_size, self.board)  # TODO: check
+            self.players.append(Particle(i, x_size, y_size, vision_size, self.board))  # TODO: check
             self.players[i].fill_affinity_list(players_amount)
 
     def update_affinity(self):
@@ -157,7 +159,7 @@ class Board:
                 if i in neighborhoods[neighbor] or not self.players[i].alive:
                     neighborhoods[neighbor].remove(i)
         for i in range(len(neighborhoods)):
-            if neighborhoods[i] != []:
+            if neighborhoods[i]:
                 for j in range(len(neighborhoods[i])):
                     player_1 = self.players[i]
                     player_2 = self.players[neighborhoods[i][j]]
@@ -252,7 +254,7 @@ class Board:
 
     def move_players(self):
         """
-        Move the alive players in the board
+        Move alive players in the board
         """
         for i in range(len(self.players)):
             if self.players[i].alive:
