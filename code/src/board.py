@@ -62,12 +62,24 @@ class Board:
             self.players.append(Particle(i, x_size, y_size, vision_size, self.board))  # TODO: check
             self.players[i].fill_affinity_list(players_amount)
 
-    def update_affinity(self):
+    def alive_players(self):
+        """
+        Method that filters the players list and returns the list of alive players only.
+        Returns
+        -------
+        list
+            The list of players currently alive
+        """
+        alive_players = filter(lambda player: player.alive, self.players)
+        return alive_players
+
+    def update_affinity_boundaries(self):
         """
         Function that updates the affinity level limits of the players
         """
-        for i in range(len(self.players)):
-            vec = self.players[i].neighbors
+        alive_p = self.alive_players()
+        for i in range(len(alive_p)):
+            vec = alive_p[i].neighbors
             for v in range(len(vec)):
                 if vec[v] > 100:
                     vec[v] = 100
@@ -79,16 +91,17 @@ class Board:
         Function that updates the despair level of the players, the function takes into consideration the
         affinity levels of the player.
         """
-        for i in self.players:
+        alive_p = self.alive_players()
+        for player in alive_p:
             # Available neighbors
-            neighbors = filter((lambda x: True if x > 0 else False), i.neighbors)
+            neighbors = filter((lambda x: True if x > 0 else False), player.neighbors)
             # Calculate the average of the interactions
             s = sum(neighbors) / len(neighbors)
             if s > 50:
                 cant = random.randint(0, 2)
-                i.despair -= cant
-            if i.despair < 0:
-                i.despair = 0
+                player.despair -= cant
+            if player.despair < 0:
+                player.despair = 0
 
     def suspicion_propagation(self, player_1, player_2):
         """
@@ -102,12 +115,12 @@ class Board:
         """
         do_player1_trust = True if player_1.neighbors[player_2.id] >= 40 else False
         do_player2_trust = True if player_2.neighbors[player_1.id] >= 40 else False
-        if player_1.suspicious == -1:
-            player_1.suspicious = player_2.suspicious if do_player1_trust else -1
-        if player_2.suspicious == -1:
-            player_2.suspicious = player_1.suspicious if do_player2_trust else -1
+        if player_1.suspect == -1:
+            player_1.suspect = player_2.suspect if do_player1_trust else -1
+        if player_2.suspect == -1:
+            player_2.suspect = player_1.suspect if do_player2_trust else -1
 
-    def players_interaction(self, player_1, player_2):  # TODO: Use switch?
+    def players_interaction(self, player_1, player_2):
         """
         Function that updates the affinity between two players using the rules of the game.
         Parameters
@@ -143,13 +156,16 @@ class Board:
         """
         Function that verifies and saves the interaction between the players
         """
-        neighborhoods = [None] * len(self.players)
-        for i in range(len(self.players)):
-            if self.players[i].alive:
-                neighborhoods[i] = self.players[i].calculate_near_neighbors(self.board)
-                neighborhoods[i] = filter((lambda x: True if self.players[x].alive else False), neighborhoods[i])
+        neighborhoods = []
+        for player in self.players:
+            if player.alive:
+                n_player_i = player.calculate_near_neighbors(self.board)
+                player_id = player.id
+                neighborhoods.append(n_player_i)
+                neighborhoods[player_id] = filter((lambda x: True if self.players[x].alive else False),
+                                                  neighborhoods[player_id])
             else:
-                neighborhoods[i] = []
+                neighborhoods.append([])
         # We delete the duplicates
         for i in range(len(neighborhoods)):
             neighborhood_i = neighborhoods[i]
@@ -166,29 +182,29 @@ class Board:
                         self.players_interaction(player_1, player_2)
                     if self.phase == 2:
                         self.suspicion_propagation(player_1, player_2)
-        self.update_affinity()
+        self.update_affinity_boundaries()
         self.update_despair()
 
     def has_murder(self):
         """
         Function that verifies if a murder happened
         """
-        players = self.players[:]
+        alive_p = self.alive_players()
+        players = alive_p[:]
         random.shuffle(players)
-        for i in players:
-            if i.alive:
-                if i.despair >= 20:
-                    self.phase = 1
-                    self.killer = i.id
-                    break
+        for player in players:
+            if player.despair >= 20:
+                self.phase = 1
+                self.killer = player.id
+                break
 
     def increase_despair(self):
         """
         Function that increases the despair of all the living players
         """
-        for i in self.players:
-            if i.alive:
-                i.update_despair()
+        alive_p = self.alive_players()
+        for player in alive_p:
+            player.update_despair()
 
     def distance_from_murder(self, player):
         """
@@ -220,7 +236,7 @@ class Board:
         killer: Particle
             Particle that will have the role of killer
         victim: Particle
-            Particle that will have the role of victim
+            The particle that will have the role of victim
         """
         self.corpse_x = victim.x
         self.corpse_y = victim.y
@@ -228,19 +244,18 @@ class Board:
         victim.die()
         victim_id = victim.id
         self.victim = victim_id
-        for i in self.players:
-            if i.alive:
-                i.neighbors[id] = -1
-                i.suspicious = -1
+        alive_p = self.alive_players()
+        for player in alive_p:
+            player.neighbors[victim_id] = -1
+            player.suspect = -1
         # There will always be a key witness that will see the crime
-        near_players = self.players[:]
-        near_players.remove(self.players[self.killer])
-        near_players.remove(self.players[self.victim])
+        near_players = alive_p[:]
+        near_players.remove(self.players[killer.id])
         near_players.sort(key=self.distance_from_murder)  # Gets the nearest player
-        self.players[near_players[0].id].suspicious = self.killer
+        self.players[near_players[0].id].suspect = killer.id
         self.increase_despair()
 
-    def search_victim(self):  # TODO Move to particle?, check what happens when there is not close neighbor
+    def search_victim(self):  # TODO Move to particle?
         """
         Function that takes the closest neighbor of the killer and kills it.
         """
@@ -255,9 +270,9 @@ class Board:
         """
         Move alive players in the board
         """
-        for i in range(len(self.players)):
-            if self.players[i].alive:
-                self.players[i].move(self.board)
+        alive_p = self.alive_players()
+        for player in alive_p:
+            player.move(self.board)
 
     def run(self):
         """
@@ -272,14 +287,14 @@ class Board:
             # TODO Check that when move again to phase 0, delete the corpse from the board
             if self.time_left < 0:
                 # Calculate the verdict
-                right_votes = len(filter((lambda x: True if x.suspicious == self.killer else False), self.players))
+                right_votes = len(filter((lambda x: True if x.suspect == self.killer else False), self.players))
                 alive_players = len(filter((lambda x: True if x.alive else False), self.players))
                 if right_votes > alive_players / 2:  # TODO Model when the players fail (else)
                     self.players[self.killer].die()
                     for i in self.players:
                         if i.alive:
                             i.neighbors[self.killer] = -1
-                            i.suspicious = -1
+                            i.suspect = -1
                 for i in range(self.x_m):
                     for j in range(self.y_m):
                         if self.board[i][j] == self.victim:

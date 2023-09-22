@@ -2,6 +2,7 @@ from src.board import Board
 from src.particles import Particle
 import unittest
 
+
 class BoardTest(unittest.TestCase):
 
     def test_boardConstructor(self):
@@ -19,6 +20,9 @@ class BoardTest(unittest.TestCase):
             self.assertIsInstance(player, Particle)
         self.assertEqual(len(b.players), 3)
 
-    
-
-    
+    def test_alive_players(self):
+        b = Board(5, 5, 3)
+        player = b.players[0]
+        player.die()
+        alive_p = b.alive_players()
+        self.assertEqual(len(alive_p), 2)

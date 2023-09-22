@@ -80,7 +80,7 @@ def phase_2(board_array, square_size):
                 if board_array[i][j] == board.killer:
                     fill(color(155,10,10)) 
                 else:
-                    if board.players[board_array[i][j]].suspicious != -1:
+                    if board.players[board_array[i][j]].suspect != -1:
                         fill(a)
                     else:
                         fill(color(100,150,200))

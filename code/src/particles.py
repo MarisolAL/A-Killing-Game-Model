@@ -23,7 +23,7 @@ class Particle:
         List of the particle's affinity with the neighbors
     despair: int
         Number that represents the despair or stress level of the particle
-    suspicious: int
+    suspect: int
         ID of the particle that the agent suspects committed the crime
     neighborhood_size: int
         Size of the neighborhood vision
@@ -58,7 +58,7 @@ class Particle:
         self.alive = True
         self.neighbors = []  # Neighbors of the particle, this list will have the affinity with each neighbor
         self.despair = 0
-        self.suspicious = None
+        self.suspect = None
         self.neighborhood_size = neighborhood_size  # Neighborhood vision size
         if world_array:
             world_array[self.x][self.y] = self.id
@@ -180,4 +180,4 @@ class Particle:
         self.x = -100
         self.y = -100
         self.despair = 0
-        self.suspicious = None
+        self.suspect = None
