@@ -29,6 +29,8 @@ class Board:
         y coordinate of the corpse in the current phase
     time_left: int
         Time left for a judgement
+    ended: bool
+        Boolean that indicates if the game has finished
     """
 
     def __init__(self, x_size, y_size, players_amount, vision_size=2):
@@ -55,6 +57,7 @@ class Board:
         self.corpse_x = -1
         self.corpse_y = -1
         self.time_left = 35
+        self.ended = False
         for i in range(players_amount):
             self.players.append(Particle(i, x_size, y_size, vision_size, self.board))  # TODO: check
             self.players[i].fill_affinity_list(players_amount)
@@ -90,8 +93,11 @@ class Board:
         """
         alive_p = self.alive_players()
         for player in alive_p:
+
             # Available neighbors
-            neighbors = filter((lambda x: True if x > 0 else False), player.neighbors)
+            neighbors = filter((lambda x: True if x >= 0 else False), player.neighbors)
+            if len(neighbors) < 2:
+                print(player.neighbors)
             # Calculate the average of the interactions
             s = sum(neighbors) / len(neighbors)
             if s > 50:
@@ -100,7 +106,7 @@ class Board:
             if player.despair < 0:
                 player.despair = 0
 
-    def suspicion_propagation(self, player_1, player_2):
+    def suspicion_propagation(self, player_1, player_2): # TODO Model the case of the killer interaction
         """
         Function that spreads suspicions according to the affinity level.
         Parameters
@@ -275,40 +281,52 @@ class Board:
         for player in alive_p:
             player.move(self.board)
 
-    def run(self):
+    def run(self, with_incentive=True):  # TODO Verify
         """
         Models the rules in the game, takes into consideration each game phase
         """
-        self.interact()
-        if self.phase == 0:
-            self.has_murder()
-        if self.phase == 1:
-            self.search_victim()
-        if self.phase == 2:
-            # TODO Check that when move again to phase 0, delete the corpse from the board
-            if self.time_left < 0:
-                # Calculate the verdict
-                right_votes = len(filter((lambda x: True if x.suspect == self.killer else False), self.players))
-                alive_players = len(filter((lambda x: True if x.alive else False), self.players))
-                if right_votes > alive_players / 2:  # TODO Model when the players fail (else)
-                    self.players[self.killer].die()
-                    for i in self.players:
-                        if i.alive:
-                            i.neighbors[self.killer] = -1
-                            i.suspect = -1
-                for i in range(self.x_m):
-                    for j in range(self.y_m):
-                        if self.board[i][j] == self.victim:
-                            self.board[i][j] = -1
-                        if self.board[i][j] == self.killer:
-                            self.board[i][j] = -1
-                self.corpse_x = -1
-                self.corpse_y = -1
-                self.time_left = 35
-                self.killer = -1
-                self.victim = -1
-                self.phase = 0
-            else:
-                self.time_left -= 1
-
-        self.move_players()
+        if not self.ended:
+            self.interact()
+            if self.phase == 0:
+                is_there_incentive = random.randint(0, 20)
+                if is_there_incentive == 0 and with_incentive:
+                    self.increase_despair()
+                self.has_murder()
+            if self.phase == 1:
+                self.search_victim()
+            if self.phase == 2: # TODO At the end decrease a little bit the despair
+                if self.time_left < 0:
+                    # Calculate the verdict
+                    alive_players = self.alive_players()
+                    right_votes = len(filter((lambda x: True if x.suspect == self.killer else False), alive_players))
+                    if right_votes > len(alive_players) / 2:
+                        print("WIN CASE")
+                        killer = self.players[self.killer]
+                        self.board[killer.x][killer.y] = -1
+                        self.players[self.killer].die()
+                        for i in self.players:
+                            if i.alive:
+                                i.neighbors[self.killer] = -1
+                                i.suspect = -1
+                        self.board[self.corpse_x][self.corpse_y] = -1
+                    else:
+                        print("---- The players lose the game! ----")
+                        for player in alive_players:
+                            if player.id != self.killer:
+                                self.board[player.x][player.y] = -1
+                                player.die()
+                        self.ended = True
+                    alive_players = self.alive_players()
+                    if len(alive_players) <= 2:
+                        print("---- The game has ended! ----")
+                        self.ended = True
+                    else:
+                        self.corpse_x = -1
+                        self.corpse_y = -1
+                        self.time_left = 35
+                        self.killer = -1
+                        self.victim = -1
+                        self.phase = 0
+                else:
+                    self.time_left -= 1
+            self.move_players()

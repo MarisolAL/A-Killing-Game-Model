@@ -15,7 +15,7 @@ class BoardTest(unittest.TestCase):
         self.assertEqual(b.phase, 0)
         self.assertEqual([b.corpse_x, b.corpse_y], [-1, -1])
         self.assertEqual(b.time_left, 35)
-        self.assertEqual(b.murder, None)
+        self.assertEqual(b.ended, False)
         for player in b.players:
             self.assertIsInstance(player, Particle)
         self.assertEqual(len(b.players), 3)
@@ -34,7 +34,7 @@ class BoardTest(unittest.TestCase):
         killer = b.players[0]
         self.assertFalse(victim.alive)
         self.assertEqual(b.killer, killer.id)
-        self.assertEqual(b.victim, victim.id) 
+        self.assertEqual(b.victim, victim.id)
 
     def test_run(self):
         b = Board(10, 10, 5, 3)
