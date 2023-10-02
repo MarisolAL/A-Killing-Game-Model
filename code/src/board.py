@@ -29,8 +29,6 @@ class Board:
         y coordinate of the corpse in the current phase
     time_left: int
         Time left for a judgement
-    murder: tuple
-        Tuple that has the killer and the victim of the current murder
     """
 
     def __init__(self, x_size, y_size, players_amount, vision_size=2):
@@ -57,7 +55,6 @@ class Board:
         self.corpse_x = -1
         self.corpse_y = -1
         self.time_left = 35
-        self.murder = None
         for i in range(players_amount):
             self.players.append(Particle(i, x_size, y_size, vision_size, self.board))  # TODO: check
             self.players[i].fill_affinity_list(players_amount)
@@ -228,9 +225,10 @@ class Board:
         else:
             return self.x_m
 
-    def murder(self, killer, victim):
+    def commit_murder(self, killer, victim):
         """
-        Function that models a murder in the game
+        Function that models a murder in the game.
+
         Parameters
         ----------
         killer: Particle
@@ -241,6 +239,7 @@ class Board:
         self.corpse_x = victim.x
         self.corpse_y = victim.y
         self.board[victim.x][victim.y] = -1
+        self.killer = killer.id
         victim.die()
         victim_id = victim.id
         self.victim = victim_id
@@ -263,7 +262,9 @@ class Board:
         neighborhoods = self.players[self.killer].calculate_near_neighbors(self.board)
         if neighborhoods:
             random.shuffle(neighborhoods)
-            self.murder(self.players[self.killer], self.players[neighborhoods[0]])
+            killer_p = self.players[self.killer]
+            victim_p = self.players[neighborhoods[0]]
+            self.commit_murder(killer_p, victim_p)
             self.phase = 2
 
     def move_players(self):

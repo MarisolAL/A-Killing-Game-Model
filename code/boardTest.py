@@ -26,3 +26,18 @@ class BoardTest(unittest.TestCase):
         player.die()
         alive_p = b.alive_players()
         self.assertEqual(len(alive_p), 2)
+
+    def test_murder(self):
+        b = Board(5, 5, 3)
+        b.commit_murder(b.players[0], b.players[1])
+        victim = b.players[1]
+        killer = b.players[0]
+        self.assertFalse(victim.alive)
+        self.assertEqual(b.killer, killer.id)
+        self.assertEqual(b.victim, victim.id) 
+
+    def test_run(self):
+        b = Board(10, 10, 5, 3)
+        for i in range(10000):
+            b.run()
+        print(len(b.alive_players()), b.board)
