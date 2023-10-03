@@ -152,6 +152,16 @@ class Particle:
         if self.despair > 20:
             self.despair = 20
 
+    def decrease_despair(self):
+        """
+        Function that modifies the `despair` level of a particle, decreasing it. The
+        minimum amount is 0.
+        """
+        amount = random.randint(1, 4)
+        self.despair -= amount
+        if self.despair < 0:
+            self.despair = 0
+
     def calculate_near_neighbors(self, world_array):
         """
         Function that calculates the near neighbors of the particle
@@ -174,10 +184,27 @@ class Particle:
 
     def die(self):
         """
-        Function that models the death of a particle
+        Method that models the death of a particle
         """
         self.alive = False
         self.x = -100
         self.y = -100
         self.despair = 0
         self.suspect = None
+
+    def affinity_avg(self):
+        """
+        Method the returns the average affinity of the particle with their alive neighbors.
+
+        Returns
+        -------
+        float
+            The affinity average of the players
+        """
+        affinity_avg = 0
+        total = 0
+        for neighbor_affinity in self.neighbors:
+            if neighbor_affinity > 0:
+                affinity_avg += neighbor_affinity
+                total += 1
+        return affinity_avg / total

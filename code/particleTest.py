@@ -69,3 +69,16 @@ class ParticleTest(unittest.TestCase):
         self.assertEqual(len(neighbors), 2, 'The world has 2 neighbors near the particle')
         neighbors.sort()
         self.assertEqual(neighbors, [2, 5])
+
+    def test_average_affinity(self):
+        world = [[-1 for _ in range(5)] for _ in range(5)]
+        p = Particle(1, 5, 5, 2, world, 1, 1)
+        p.fill_affinity_list(5)
+        affinity_list = p.neighbors
+        af_average = 0
+        total = 0
+        for affinity in affinity_list:
+            if affinity > 0:
+                af_average += affinity
+                total += 1
+        self.assertEqual(p.affinity_avg(), af_average / total)

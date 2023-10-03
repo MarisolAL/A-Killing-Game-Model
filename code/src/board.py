@@ -93,20 +93,19 @@ class Board:
         """
         alive_p = self.alive_players()
         for player in alive_p:
-
             # Available neighbors
             neighbors = filter((lambda x: True if x >= 0 else False), player.neighbors)
             if len(neighbors) < 2:
                 print(player.neighbors)
             # Calculate the average of the interactions
-            s = sum(neighbors) / len(neighbors)
-            if s > 50:
+            average_affinity = sum(neighbors) / len(neighbors)
+            if average_affinity > 50:
                 cant = random.randint(0, 2)
                 player.despair -= cant
             if player.despair < 0:
                 player.despair = 0
 
-    def suspicion_propagation(self, player_1, player_2): # TODO Model the case of the killer interaction
+    def suspicion_propagation(self, player_1, player_2):  # TODO Model the case of the killer interaction
         """
         Function that spreads suspicions according to the affinity level.
         Parameters
@@ -209,6 +208,14 @@ class Board:
         for player in alive_p:
             player.update_despair()
 
+    def decrease_despair(self):
+        """
+        Function that decreases the despair of all the living players
+        """
+        alive_p = self.alive_players()
+        for player in alive_p:
+            player.decrease_despair()
+
     def distance_from_murder(self, player):
         """
         Function that calculates the distance from the player to the current murder. For death players, the distance
@@ -281,6 +288,36 @@ class Board:
         for player in alive_p:
             player.move(self.board)
 
+    def despair_average(self):
+        """
+        Method that calculates the average of despair in the system.
+
+        Returns
+        -------
+        float
+            The despair average of the players
+        """
+        alive_p = self.alive_players()
+        despair_average = 0
+        for player in alive_p:
+            despair_average += player.despair
+        return despair_average / len(alive_p)
+
+    def affinity_average(self):
+        """
+        Method that calculates the affinity average in the system.
+
+        Returns
+        -------
+        float
+            The affinity average of the players
+        """
+        alive_p = self.alive_players()
+        affinity_avg = 0
+        for player in alive_p:
+            affinity_avg += player.affinity_avg()
+        return affinity_avg / len(alive_p)
+
     def run(self, with_incentive=True):  # TODO Verify
         """
         Models the rules in the game, takes into consideration each game phase
@@ -326,6 +363,7 @@ class Board:
                         self.time_left = 35
                         self.killer = -1
                         self.victim = -1
+                        self.decrease_despair()
                         self.phase = 0
                 else:
                     self.time_left -= 1
