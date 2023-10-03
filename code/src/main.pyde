@@ -2,26 +2,26 @@ from __future__ import print_function
 from particles import Particle
 from board import Board
 
-colors = [color(255,0,255),
-           color(153,102,203),
-           color(70,130,180),
-           color(199,234,70),
-           color(78,120,151), 
-           color(217,221,220),
-           color(80,151,164), 
-           color(249,135,197), 
-           color(207,152,26),
-           color(252,226,5), 
-           color(255,166,201),
-           color(254,91,172), 
-           color(131,153,107), 
-           color(161,173,231), 
-           color(244,161,136), 
-           color(45,97,205), 
-           color(183,163,173), 
-           color(201,142,81), 
-           color(85,84,54),
-           color(183,150,171)]
+colors = [color(0,255,128),
+          color(0, 255, 255),
+          color(0,128,255),
+          color(127,0,255),
+          color(255,0,255), 
+          color(255,0,127),
+          color(255,51,153),  
+          color(153,51,255), 
+          color(51,255,255), 
+          color(51,255,153),  
+          color(102,255,178), 
+          color(102,255,255), 
+          color(102,178,255), 
+          color(102,102,255), 
+          color(178, 102, 255), 
+          color(255, 102, 255),
+          color(255, 102, 178),
+          color(51, 51, 255),
+          color(153, 255, 153),
+          color(153, 255, 204)]
 
 board = Board(20,20,20)
 iterations = 0
@@ -29,7 +29,7 @@ actual_phase = 0
 board_px_size = 500
 board_size = 20
 
-def phase_0(board_array, square_size, incentive):
+def phase_0(board_array, circle_size, incentive):
     """
     Function that models the phase 0 (interaction)
     """
@@ -48,9 +48,9 @@ def phase_0(board_array, square_size, incentive):
                 stroke(0,0,0)
                 fill(color(0,0,0))
             # Draw the circle
-            circle(i*square_size, j*square_size, square_size)
+            circle(i*circle_size, j*circle_size, circle_size)
 
-def phase_1(board_array, square_size):
+def phase_1(board_array, circle_size):
     """
     Function that models the phase 1 (searching murder)
     """
@@ -65,12 +65,12 @@ def phase_1(board_array, square_size):
             else:
                 fill(color(0,0,0))
             # Draw the circle
-            circle(i*square_size, j*square_size, square_size) 
+            circle(i*circle_size, j*circle_size, circle_size)
     fill(color(155,155,10))
-    circle(board.corpse_x * square_size, board.corpse_y * square_size, 
-         square_size)
+    circle(board.corpse_x * circle_size, board.corpse_y * circle_size,
+         circle_size)
                 
-def phase_2(board_array, square_size):
+def phase_2(board_array, circle_size):
     """
     Function that models the phase 2 (murder)
     """
@@ -90,72 +90,51 @@ def phase_2(board_array, square_size):
             else:
                 fill(color(0,0,0))
             # Draw the circle
-            circle(i*square_size, j*square_size, square_size)
-    corpse_x = board.corpse_x * square_size
-    corpse_y = board.corpse_y * square_size
+            circle(i*circle_size, j*circle_size, circle_size)
+    corpse_x = board.corpse_x * circle_size
+    corpse_y = board.corpse_y * circle_size
     fill(color(155,155,10)) 
-    circle(corpse_x, corpse_y, square_size)
-
-                
+    circle(corpse_x, corpse_y, circle_size)
+        
 def setup(): 
-    size(board_px_size, board_px_size)
+    size(board_px_size, board_px_size + 200)
     stroke(50)
     background(0,0,0)
-    frameRate(5)
-
-"""
-def statistics():
-    with open("despair_1jug.txt", "a") as txt:
-        txt.write(str(board.players[7].despair) + ",")
-    with open("affinity.txt", "a") as txt:
-        txt.write(str(average/len(board.players)) + ",")
-    with open("n_players.txt", "a") as txt:
-        txt.write(str(alive_players) + ",")
-    if actual_phase != board.phase:
-        # There was a phase change
-        print(iterations, end=", ")
-        actual_phase = board.phase
-        
-    despair_total = 0
-    for i in board.players:
-        despair_total += i.despair
-    with open("despair_sis.txt", "a") as txt:
-        txt.write(str(despair_total) + ",")
-        
-    average = 0
-    alive_players = 0
-    for i in board.players:
-        vec = filter((lambda x: True if x >=0 else False),i.neighbors)
-        s = sum(vec)
-        average += s/len(vec)
-        if i.alive:
-            alive_players += 1 
-            
-    #for i in range(len(board.players)):
-        #print(board.players[i].neighbors, board.players[i].despair)
-    #print("----------------------")
-    
-    #print(board.players[7].despair,end=',')
-"""
-        
-        
+    frameRate(5) 
         
 def draw():
-    '''Draw and update the system ''' 
-    global iterations # TODO Move to a file
-    global actual_phase
+    '''Draw and update the system '''  
+    global iterations # TODO Move to a file 
+    fill(255, 204, 229)
+    rect(0, 500, 500, 700, 8, 8, 0, 0)
+    fill(45, 98, 152)
+    textSize(16)
+    textAlign(LEFT)
+    iteration_str = ("Iteration: %i" % (iterations)) 
+    phase_str = ("Actual phase: %i" % (board.phase))    
+    text(iteration_str, 20, 520)
+    text(phase_str, 20, 540)
+    
+    despair_avg = board.despair_average()
+    despair_str = ("Average despair: %i" % (despair_avg)) 
+    text(despair_str, 20, 560)
+    
+    af_avg = board.players_affinity_average() 
+    af_str = ("Average affinity: %i" % (af_avg)) 
+    text(af_str, 20, 580) 
+    
     incentive = False
     if iterations%30 == 0:
         board.increase_despair() 
         incentive = True
-    square_size = board_px_size/ board_size
+    circle_size = board_px_size/ board_size
     board_array = board.board
     if board.phase == 0:
-        phase_0(board_array, square_size, incentive)
+        phase_0(board_array, circle_size, incentive)
     if board.phase == 1:
-        phase_1(board_array, square_size)
+        phase_1(board_array, circle_size)
     if board.phase == 2:
-        phase_2(board_array, square_size) 
+        phase_2(board_array, circle_size)
         
     board.run()
     iterations += 1

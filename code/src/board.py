@@ -303,7 +303,7 @@ class Board:
             despair_average += player.despair
         return despair_average / len(alive_p)
 
-    def affinity_average(self):
+    def players_affinity_average(self):
         """
         Method that calculates the affinity average in the system.
 
