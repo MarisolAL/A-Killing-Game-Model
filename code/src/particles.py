@@ -58,7 +58,7 @@ class Particle:
         self.alive = True
         self.neighbors = []  # Neighbors of the particle, this list will have the affinity with each neighbor
         self.despair = 0
-        self.suspect = None
+        self.suspect = -1
         self.neighborhood_size = neighborhood_size  # Neighborhood vision size
         if world_array:
             world_array[self.x][self.y] = self.id
@@ -157,7 +157,7 @@ class Particle:
         Function that modifies the `despair` level of a particle, decreasing it. The
         minimum amount is 0.
         """
-        amount = random.randint(1, 4)
+        amount = random.randint(1, 5)
         self.despair -= amount
         if self.despair < 0:
             self.despair = 0

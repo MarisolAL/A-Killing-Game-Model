@@ -59,7 +59,7 @@ class Board:
         self.time_left = 35
         self.ended = False
         for i in range(players_amount):
-            self.players.append(Particle(i, x_size, y_size, vision_size, self.board))  # TODO: check
+            self.players.append(Particle(i, x_size, y_size, vision_size, self.board))
             self.players[i].fill_affinity_list(players_amount)
 
     def alive_players(self):
@@ -105,9 +105,10 @@ class Board:
             if player.despair < 0:
                 player.despair = 0
 
-    def suspicion_propagation(self, player_1, player_2):  # TODO Model the case of the killer interaction
+    def suspicion_propagation(self, player_1, player_2):
         """
-        Function that spreads suspicions according to the affinity level.
+        Function that spreads suspicions according to the affinity level. If one of the players is the killer
+        no propagation is made.
         Parameters
         ----------
         player_1: Particle
@@ -117,10 +118,13 @@ class Board:
         """
         do_player1_trust = True if player_1.neighbors[player_2.id] >= 40 else False
         do_player2_trust = True if player_2.neighbors[player_1.id] >= 40 else False
-        if player_1.suspect == -1:
-            player_1.suspect = player_2.suspect if do_player1_trust else -1
-        if player_2.suspect == -1:
-            player_2.suspect = player_1.suspect if do_player2_trust else -1
+        is_player1_killer = player_1.id == self.killer
+        is_player2_killer = player_2.id == self.killer
+        if not is_player1_killer and not is_player2_killer:
+            if player_1.suspect == -1:
+                player_1.suspect = player_2.suspect if do_player1_trust else -1
+            if player_2.suspect == -1:
+                player_2.suspect = player_1.suspect if do_player2_trust else -1
 
     def players_interaction(self, player_1, player_2):
         """
@@ -218,8 +222,8 @@ class Board:
 
     def distance_from_murder(self, player):
         """
-        Function that calculates the distance from the player to the current murder. For death players, the distance
-        is the maximum one.
+        Function that calculates the distance from the player to the current murder. For death players,
+        the distance is the maximum one.
         Parameters
         ----------
         player: Particle
@@ -267,7 +271,7 @@ class Board:
         self.players[near_players[0].id].suspect = killer.id
         self.increase_despair()
 
-    def search_victim(self):  # TODO Move to particle?
+    def search_victim(self):
         """
         Function that takes the closest neighbor of the killer and kills it.
         """
@@ -331,7 +335,7 @@ class Board:
                 self.has_murder()
             if self.phase == 1:
                 self.search_victim()
-            if self.phase == 2: # TODO At the end decrease a little bit the despair
+            if self.phase == 2:
                 if self.time_left < 0:
                     # Calculate the verdict
                     alive_players = self.alive_players()
