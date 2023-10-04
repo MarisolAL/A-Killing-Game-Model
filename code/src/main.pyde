@@ -69,8 +69,7 @@ def phase_2(board_array, circle_size):
     r = circle_size/2
     corpse_x = board.corpse_x * circle_size
     corpse_y = board.corpse_y * circle_size
-    fill(color(155,155,10)) 
-    #circle(corpse_x + r, corpse_y + r, circle_size)
+    fill(color(155,155,10))  
     triangle(corpse_x, corpse_y + circle_size,
              corpse_x + r, corpse_y,
              corpse_x + circle_size, corpse_y + circle_size)

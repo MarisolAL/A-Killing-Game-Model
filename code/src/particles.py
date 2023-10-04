@@ -67,7 +67,7 @@ class Particle:
         """
         Function that fills the neighbors affinity list of a particle, every particle has in the position i
         the level of affinity with the particle i. On the position with itself the array will have a -1 and
-        the affinity amount will randomly begin with numbers between 4 and 6 to make available the interaction.
+        the affinity amount will randomly begin with numbers between 40 and 60 to make available the interaction.
 
         Parameters
         ----------
@@ -208,3 +208,4 @@ class Particle:
                 affinity_avg += neighbor_affinity
                 total += 1
         return affinity_avg / total
+

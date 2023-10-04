@@ -136,27 +136,24 @@ class Board:
         player_2: Particle
             Player that will interact
         """
-        affinity_p1 = False
-        affinity_p2 = False
-        if player_1.neighbors[player_2.id] >= 50:
-            # If the affinity is positive
-            affinity_p1 = True
-        if player_2.neighbors[player_1.id] >= 50:
-            affinity_p2 = True
-        if affinity_p1 and affinity_p2:
-            # If both affinities are positive, then we add 2 to each affinity
-            player_1.neighbors[player_2.id] += 3
-            player_2.neighbors[player_1.id] += 3
-        elif affinity_p1 and not affinity_p2:
-            # The neighbor with positive affinity keeps it and the negative one increases the negativity
-            player_2.neighbors[player_1.id] += 5
-            player_1.neighbors[player_2.id] -= 5
-        elif affinity_p2:
-            player_2.neighbors[player_1.id] -= 5
-            player_1.neighbors[player_2.id] += 5
+        positive_affinity_p1 = player_1.neighbors[player_2.id] >= 50
+        positive_affinity_p2 = player_2.neighbors[player_1.id] >= 50
+        random_n = random.randint(0, 9)
+        if positive_affinity_p1 and positive_affinity_p2:
+            added_number_p1 = 5 if random_n < 9 else -1
+            added_number_p2 = 5 if random_n < 9 else -1
+        elif positive_affinity_p1:
+            added_number_p1 = 3 if random_n < 6 else -2
+            added_number_p2 = 1 if random_n < 3 else -3
+        elif positive_affinity_p2:
+            added_number_p2 = 3 if random_n < 6 else -2
+            added_number_p1 = 1 if random_n < 3 else -3
         else:
-            player_1.neighbors[player_2.id] -= 1
-            player_2.neighbors[player_1.id] -= 1
+            added_number_p1 = 1 if random_n < 3 else -3
+            added_number_p2 = 1 if random_n < 3 else -3
+
+        player_1.neighbors[player_2.id] += added_number_p1
+        player_2.neighbors[player_1.id] += added_number_p2
 
     def interact(self):
         """
@@ -184,8 +181,7 @@ class Board:
                 for j in range(len(neighborhoods[i])):
                     player_1 = self.players[i]
                     player_2 = self.players[neighborhoods[i][j]]
-                    if self.phase == 0:
-                        self.players_interaction(player_1, player_2)
+                    self.players_interaction(player_1, player_2)
                     if self.phase == 2:
                         self.suspicion_propagation(player_1, player_2)
         self.update_affinity_boundaries()
@@ -322,7 +318,7 @@ class Board:
             affinity_avg += player.affinity_avg()
         return affinity_avg / len(alive_p)
 
-    def run(self, with_incentive=True):  # TODO Verify
+    def run(self, with_incentive=True):
         """
         Models the rules in the game, takes into consideration each game phase
         """
@@ -339,9 +335,10 @@ class Board:
                 if self.time_left < 0:
                     # Calculate the verdict
                     alive_players = self.alive_players()
-                    right_votes = len(filter((lambda x: True if x.suspect == self.killer else False), alive_players))
+                    right_votes = len(filter((lambda x: True if x.suspect == self.killer else False),
+                                             alive_players))
                     if right_votes > len(alive_players) / 2:
-                        print("WIN CASE")
+                        print("---- Win case! ----")
                         killer = self.players[self.killer]
                         self.board[killer.x][killer.y] = -1
                         self.players[self.killer].die()
