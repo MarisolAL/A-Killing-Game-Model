@@ -23,7 +23,7 @@ colors = [color(0,255,128),
           color(153, 255, 153),
           color(153, 255, 204)]
 
-board = Board(20,20,20)
+board = Board(20,20,20,3)
 iterations = 0
 actual_phase = 0
 board_px_size = 500
@@ -33,6 +33,7 @@ def phase_0(board_array, circle_size, incentive):
     """
     Function that models the phase 0 (interaction)
     """
+    r = circle_size/2
     for i in range(len(board_array)):
         for j in range(len(board_array[i])):
             if board_array[i][j] != -1:
@@ -43,17 +44,14 @@ def phase_0(board_array, circle_size, incentive):
                     fill(color(despair_color + 5, 20, 10))
                 else:
                     player_color = colors[player_id % len(colors)]
-                    fill(player_color)
-            else:
-                stroke(0,0,0)
-                fill(color(0,0,0))
-            # Draw the circle
-            circle(i*circle_size, j*circle_size, circle_size)
+                    fill(player_color) 
+                circle(i*circle_size + r, j*circle_size + r, circle_size) 
 
 def phase_1(board_array, circle_size):
     """
     Function that models the phase 1 (searching murder)
     """
+    r = circle_size/2
     for i in range(len(board_array)):
         for j in range(len(board_array[i])):
             if board_array[i][j] != -1:
@@ -62,19 +60,21 @@ def phase_1(board_array, circle_size):
                     fill(color(155,10,10))  
                 else:
                     fill(color(100,50,100))
-            else:
-                fill(color(0,0,0))
-            # Draw the circle
-            circle(i*circle_size, j*circle_size, circle_size)
-    fill(color(155,155,10))
-    circle(board.corpse_x * circle_size, board.corpse_y * circle_size,
-         circle_size)
+                circle(i*circle_size + r, j*circle_size + r, circle_size)          
                 
 def phase_2(board_array, circle_size):
     """
     Function that models the phase 2 (murder)
-    """
-    a = colors[board.killer%len(colors)]
+    """ 
+    r = circle_size/2
+    corpse_x = board.corpse_x * circle_size
+    corpse_y = board.corpse_y * circle_size
+    fill(color(155,155,10)) 
+    #circle(corpse_x + r, corpse_y + r, circle_size)
+    triangle(corpse_x, corpse_y + circle_size,
+             corpse_x + r, corpse_y,
+             corpse_x + circle_size, corpse_y + circle_size)
+    killer_color = colors[board.killer%len(colors)]
     for i in range(len(board_array)):
         for j in range(len(board_array[i])):
             if board_array[i][j] != -1:
@@ -84,28 +84,13 @@ def phase_2(board_array, circle_size):
                     fill(color(155,10,10)) 
                 else:
                     if board.players[player_id].suspect != -1:
-                        fill(a)
+                        fill(killer_color)
                     else:
                         fill(color(255,204,229))
-            else:
-                fill(color(0,0,0))
-            # Draw the circle
-            circle(i*circle_size, j*circle_size, circle_size)
-    corpse_x = board.corpse_x * circle_size
-    corpse_y = board.corpse_y * circle_size
-    fill(color(155,155,10)) 
-    circle(corpse_x, corpse_y, circle_size)
-        
-def setup(): 
-    size(board_px_size, board_px_size + 200)
-    stroke(50)
-    background(0,0,0)
-    frameRate(5) 
-        
-def draw():
-    '''Draw and update the system '''  
-    global iterations # TODO Move to a file 
-    fill(255, 204, 229)
+                circle(i*circle_size + r, j*circle_size + r, circle_size) 
+            
+def show_basic_stats(board, iterations):
+    fill(245, 243, 240)
     rect(0, 500, 500, 700, 8, 8, 0, 0)
     fill(45, 98, 152)
     textSize(16)
@@ -123,6 +108,25 @@ def draw():
     af_str = ("Average affinity: %i" % (af_avg)) 
     text(af_str, 20, 580) 
     
+    alive_players = board.alive_players()
+    alive_p_str = ("Alive players: %i" % (len(alive_players)))
+    text(alive_p_str, 20, 600) 
+    
+        
+def setup(): 
+    size(board_px_size, board_px_size + 110)
+    stroke(50)
+    background(0,0,0)
+    frameRate(5) 
+        
+def draw():
+    '''Draw and update the system '''  
+    global iterations
+    fill(0, 0, 0)
+    square(0, 0, board_px_size)
+    
+    show_basic_stats(board, iterations) 
+    
     incentive = False
     if iterations%30 == 0:
         board.increase_despair() 
@@ -132,9 +136,20 @@ def draw():
     if board.phase == 0:
         phase_0(board_array, circle_size, incentive)
     if board.phase == 1:
+        killer = board.killer
+        phase_str = ("The player %i is searching a victim" % (killer))
+        text(phase_str, 200, 520) 
         phase_1(board_array, circle_size)
     if board.phase == 2:
+        killer = board.killer
+        victim = board.victim
+        phase_str = ("The player %i killed the player %i" % (killer, victim))
+        text(phase_str, 200, 520) 
         phase_2(board_array, circle_size)
+    if board.ended: 
+        fill(153, 0, 0)
+        text("The game has ended", 200, 540) 
         
+    
     board.run()
     iterations += 1
