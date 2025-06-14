@@ -1,29 +1,55 @@
 # A Killing Game Model
 
-Inspired by the game _Danganronpa_ the project models a simpler killing game. For the simulation the
-project uses Python 2 and [Processing.py](https://py.processing.org/) framework.
+Inspired by the _Danganronpa_ series, this project simulates a simplified version of a "killing game" using Python 2 and the [Processing.py](https://py.processing.org/) framework for visualization.
 
-## Game rules
+The simulation models a group of players (referred to as "particles") that interact on a board and transition through multiple phases, including social bonding, murder, and investigation.
 
-The game has a set of players (in the code also referred as particles), a board or mesh where they will interact, and 
-three phases.
+# Game Overview
 
-### Phase 0
+The game simulates a loop of three main phases across a board populated with interacting agents.
 
-In the phase 0 the players will just interact between each other, these interactions modify the affinity 
-levels between the players, in some iterations an incentive will be sent making the despair levels increase until
-changing to phase 1, this happens when a player reach the highest despair level.
+## Phase 0: Social Interaction
 
-### Phase 1
+Particles interact randomly, affecting affinity levels between them.
 
-Because a player reached the highest despair level, it will start chasing a victim to kill it and try to get away
-with the murder. The particle will move until it finds a particle in their vision field and will kill the neighbor, 
-there will always be a neighbor who will witness the crime, this action will change the current phase to phase 2.
+Occasionally, despair levels increase due to external incentives.
 
-### Phase 2
+When any particle reaches maximum despair, the game transitions to Phase 1.
 
-Phase 2 is considered as the _Investigation phase_, here the witness of the crime will try to spread the culprit
-to the particles it has near, and this other particles will do the same, to make the others believe 
-the culprit the affinity should be high enough, this phase has a time limit of 35 iterations, if in those iterations
-more than 50% of the alive players doesn't have the right culprit then the killer wins, in other case the killer is 
-eliminated from the game and the game returns to phase 0.
+## Phase 1: The Killing
+
+A player driven to despair becomes the killer.
+
+The killer searches for a target and kills a visible neighbor.
+
+Another nearby particle witnesses the murder.
+
+The game immediately moves to Phase 2.
+
+## Phase 2: Investigation
+
+The witness tries to spread the identity of the killer to nearby particles.
+
+Particles will believe the accusation only if their affinity with the accuser is high enough.
+
+This phase lasts for 35 iterations.
+
+If by the end, less than 50% of the surviving players know the correct killer: The killer wins.
+
+Otherwise: The killer is eliminated, and the game returns to Phase 0.
+
+# Execution
+
+To run the simulation:
+
+* Make sure you have Python 2 installed.
+
+* Install and set up Processing.py.
+
+* Run the file `main.pyde` through the Processing IDE.
+
+## Notes
+
+This is a conceptual simulation and uses basic agent behavior modeling.
+
+The project was developed for experimentation and creative exploration of emergent group dynamics under simple rules.
